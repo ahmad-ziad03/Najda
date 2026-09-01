@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تعديل بيانات المستشفى | Edit hospital — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div data-side="admin" data-active="hospitals"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="تعديل بيانات المستشفى" data-title-en="Edit hospital"></div>
+      <div class="content">
+
+        <a href="admin-hospital-manage.html" class="back-link">← <span data-lang-ar>عودة لإدارة المستشفى</span><span data-lang-en>Back to manage hospital</span></a>
+
+        <div class="page-head">
+          <h2 class="page-head-title"><span data-lang-ar>تعديل بيانات المستشفى</span><span data-lang-en>Edit hospital details</span></h2>
+          <p class="muted"><span data-lang-ar>حدّث بيانات المستشفى ومسؤول التواصل، ثم احفظ التغييرات.</span><span data-lang-en>Update the hospital and its contact person, then save.</span></p>
+        </div>
+
+        <form onsubmit="event.preventDefault(); saveHospital();">
+          <div class="edit-grid">
+            <!-- hospital data -->
+            <section class="card">
+              <h3 class="block-title" style="margin-block-end:16px"><span data-lang-ar>بيانات المستشفى</span><span data-lang-en>Hospital data</span></h3>
+
+              <div class="field">
+                <label><span data-lang-ar>اسم المستشفى</span><span data-lang-en>Hospital name</span></label>
+                <input class="input" value="مستشفى البشير" required />
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label><span data-lang-ar>البريد الرسمي</span><span data-lang-en>Official email</span></label>
+                  <input class="input" type="email" value="info@bashir.jo" style="direction:ltr" required />
+                </div>
+                <div class="field">
+                  <label><span data-lang-ar>الهاتف</span><span data-lang-en>Phone</span></label>
+                  <input class="input" type="tel" value="+962 6 000 0000" style="direction:ltr" />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label><span data-lang-ar>رقم الترخيص</span><span data-lang-en>License number</span></label>
+                  <input class="input" value="MOH-40219" style="direction:ltr" />
+                </div>
+                <div class="field">
+                  <label><span data-lang-ar>الحالة</span><span data-lang-en>Status</span></label>
+                  <select class="select" id="statusSel">
+                    <option value="Approved" data-ar="معتمد" data-en="Approved">معتمد</option>
+                    <option value="Pending" data-ar="قيد المراجعة" data-en="Pending">قيد المراجعة</option>
+                    <option value="Suspended" data-ar="معلّق" data-en="Suspended">معلّق</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label><span data-lang-ar>المدينة</span><span data-lang-en>City</span></label>
+                  <select class="select" id="citySel"></select>
+                </div>
+                <div class="field">
+                  <label><span data-lang-ar>المنطقة</span><span data-lang-en>Area</span></label>
+                  <input class="input" value="العبدلي" />
+                </div>
+              </div>
+            </section>
+
+            <!-- contact person -->
+            <section class="card">
+              <h3 class="block-title" style="margin-block-end:4px"><span data-lang-ar>مسؤول التواصل</span><span data-lang-en>Contact person</span></h3>
+              <p class="muted" style="font-size:.88rem;margin-block-end:16px"><span data-lang-ar>الشخص المسؤول عن التواصل بين المنصة والمستشفى.</span><span data-lang-en>The person responsible for communication between the platform and the hospital.</span></p>
+
+              <div class="field">
+                <label><span data-lang-ar>الاسم</span><span data-lang-en>Name</span></label>
+                <input class="input" value="د. أحمد سرحان" required />
+              </div>
+              <div class="field">
+                <label><span data-lang-ar>البريد الإلكتروني</span><span data-lang-en>Email</span></label>
+                <input class="input" type="email" value="ahmad.sarhan@bashir.jo" style="direction:ltr" required />
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label><span data-lang-ar>رقم الهاتف</span><span data-lang-en>Phone</span></label>
+                  <input class="input" type="tel" value="+962 79 555 0132" style="direction:ltr" />
+                </div>
+                <div class="field">
+                  <label><span data-lang-ar>تاريخ التعيين</span><span data-lang-en>Appointment date</span></label>
+                  <input class="input" type="date" value="2025-01-19" style="direction:ltr" />
+                </div>
+              </div>
+
+              <div class="contact-hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>
+                <span data-lang-ar>تظهر هذه البيانات في صفحة إدارة المستشفى.</span><span data-lang-en>These details appear on the hospital management page.</span>
+              </div>
+            </section>
+          </div>
+
+          <div class="form-actions" style="margin-block-start:22px">
+            <button class="btn btn-primary btn-lg" type="submit"><span data-lang-ar>حفظ التغييرات</span><span data-lang-en>Save changes</span></button>
+            <a href="admin-hospital-manage.html" class="btn btn-ghost btn-lg"><span data-lang-ar>إلغاء</span><span data-lang-en>Cancel</span></a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function pageRender(){
+      document.getElementById("citySel").innerHTML =
+        DATA.cities.map((c,i)=>`<option data-ar="${c.ar}" data-en="${c.en}" ${i===0?"selected":""}>${c.ar}</option>`).join("");
+      localizeOptions();
+    }
+    function saveHospital(){
+      showToast({ar:"تم حفظ بيانات المستشفى بنجاح",en:"Hospital details saved"}, "success");
+      setTimeout(()=>{ window.location.href="admin-hospital-manage.html"; }, 1100);
+    }
+    function localizeOptions(){
+      document.querySelectorAll("select option[data-ar]").forEach(o=>o.textContent=o.getAttribute("data-"+currentLang()));
+    }
+    document.addEventListener("langchange", localizeOptions);
+  </script>
+</body>
+</html>

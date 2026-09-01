@@ -1,0 +1,81 @@
+﻿@using System.Security.Claims
+@{
+    // Controllers set:
+    //   ViewData["Area"]   = "donor" | "hospital" | "admin"
+    //   ViewData["Active"] = key of the active menu item
+    var area = ViewData["Area"] as string ?? "donor";
+    var active = ViewData["Active"] as string ?? "";
+    string On(string key) => active == key ? "active" : "";
+
+    // menu items: (key, controller, action, icon, ar, en)
+    var menus = new Dictionary<string, (string key, string ctrl, string act, string icon, string ar, string en)[]>
+    {
+        ["donor"] = new[]
+        {
+            ("dash",     "Donor", "Dashboard", "home",    "لوحتي",             "Dashboard"),
+            ("requests", "Donor", "Requests",  "list",    "الطلبات المطابقة",  "Matched requests"),
+            ("history",  "Donor", "History",   "history", "سجل التبرعات",      "Donation history"),
+            ("profile",  "Donor", "Profile",   "user",    "ملفي الشخصي",       "My profile"),
+        },
+        ["hospital"] = new[]
+        {
+            ("dash",     "Hospital", "Dashboard",   "home",  "لوحة المستشفى",       "Dashboard"),
+            ("post",     "Hospital", "PostRequest", "plus",  "طلب دم جديد",         "New request"),
+            ("requests", "Hospital", "Requests",    "list",  "إدارة الطلبات",       "Manage requests"),
+            ("matched",  "Hospital", "Matched",     "users", "المتبرعون المطابقون", "Matched donors"),
+        },
+        ["admin"] = new[]
+        {
+            ("dash",      "Admin", "Dashboard", "chart",    "نظرة عامة",   "Overview"),
+            ("users",     "Admin", "Donors",    "users",    "المتبرعون",   "Donors"),
+            ("hospitals", "Admin", "Hospitals", "building", "المستشفيات",  "Hospitals"),
+        },
+    };
+    var items = menus.TryGetValue(area, out var m) ? m : menus["donor"];
+
+    var roleLabel = area switch
+    {
+        "hospital" => ("حساب المستشفى", "Hospital account"),
+        "admin" => ("لوحة الإدارة", "Admin panel"),
+        _ => ("حساب المتبرع", "Donor account"),
+    };
+
+    var displayName = User.Identity?.Name ?? "—";
+    var initial = string.IsNullOrEmpty(displayName) ? "N" : displayName.Substring(0, 1).ToUpper();
+    var roleName = area switch { "hospital" => ("مستشفى", "Hospital"), "admin" => ("مدير النظام", "Administrator"), _ => ("متبرع", "Donor") };
+}
+
+<aside class="side" id="side">
+    <a asp-controller="Home" asp-action="Index" class="brand">
+        @Html.Icon("logo")
+        <span><span data-lang-ar>نجدة</span><span data-lang-en>Najda</span><small data-lang-ar>@roleLabel.Item1</small><small data-lang-en>@roleLabel.Item2</small></span>
+    </a>
+
+    <div class="side-label"><span data-lang-ar>القائمة</span><span data-lang-en>Menu</span></div>
+
+    @foreach (var it in items)
+    {
+        <a asp-controller="@it.ctrl" asp-action="@it.act" class="@On(it.key)">
+            @Html.Icon(it.icon)
+            <span><span data-lang-ar>@it.ar</span><span data-lang-en>@it.en</span></span>
+        </a>
+    }
+
+    <div class="spacer"></div>
+
+    <div class="side-user">
+        <div class="av">@initial</div>
+        <div>
+            <div class="nm">@displayName</div>
+            <div class="rl"><span data-lang-ar>@roleName.Item1</span><span data-lang-en>@roleName.Item2</span></div>
+        </div>
+    </div>
+
+    <form asp-controller="Account" asp-action="Logout" asp-route-returnUrl="/" method="post">
+        <button type="submit" class="side-logout">
+            @Html.Icon("logout")
+            <span><span data-lang-ar>تسجيل الخروج</span><span data-lang-en>Log out</span></span>
+        </button>
+    </form>
+</aside>
+<div class="scrim" id="scrim" onclick="closeSide()"></div>

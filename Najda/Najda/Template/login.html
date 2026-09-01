@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تسجيل الدخول | Log in — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="auth">
+    <aside class="auth-aside">
+      <a href="index.html" class="brand">
+        <svg class="logo" viewBox="0 0 40 40" fill="none"><path d="M20 3C20 3 32 15.5 32 24.5C32 31.4 26.6 37 20 37C13.4 37 8 31.4 8 24.5C8 15.5 20 3 20 3Z" fill="#C0392B"/><path d="M20 12C20 12 26 18.5 26 23.5C26 27 23.3 30 20 30" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".85"/></svg>
+        <span>نجدة</span>
+      </a>
+      <div class="aside-body">
+        <h2><span data-lang-ar>مرحباً بعودتك، أيها البطل.</span><span data-lang-en>Welcome back, hero.</span></h2>
+        <p><span data-lang-ar>سجّل دخولك لمتابعة الطلبات العاجلة القريبة منك وإدارة تبرعاتك.</span><span data-lang-en>Log in to follow urgent cases near you and manage your donations.</span></p>
+        <div class="aside-stats">
+          <div><div class="num">4,200+</div><div class="lbl"><span data-lang-ar>متبرع</span><span data-lang-en>Donors</span></div></div>
+          <div><div class="num">1,850</div><div class="lbl"><span data-lang-ar>وحدة مُوفّرة</span><span data-lang-en>Units provided</span></div></div>
+        </div>
+      </div>
+      <svg class="deco" viewBox="0 0 24 24" fill="#fff"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z"/></svg>
+    </aside>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <div class="top">
+          <a href="index.html" class="brand" style="color:var(--pine)">
+            <svg class="logo" viewBox="0 0 40 40" fill="none"><path d="M20 3C20 3 32 15.5 32 24.5C32 31.4 26.6 37 20 37C13.4 37 8 31.4 8 24.5C8 15.5 20 3 20 3Z" fill="#C0392B"/></svg>
+            <span>نجدة</span>
+          </a>
+          <button class="lang-toggle" onclick="toggleLang()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg>
+            <span data-lang-label>EN</span>
+          </button>
+        </div>
+
+        <h1><span data-lang-ar>تسجيل الدخول</span><span data-lang-en>Log in</span></h1>
+        <p class="sub"><span data-lang-ar>أدخل بياناتك للمتابعة إلى حسابك.</span><span data-lang-en>Enter your details to continue to your account.</span></p>
+
+        <form onsubmit="event.preventDefault(); window.location.href='donor-dashboard.html';" style="margin-block-start:24px">
+          <div class="field">
+            <label><span data-lang-ar>البريد الإلكتروني</span><span data-lang-en>Email</span></label>
+            <input class="input" type="email" required data-ph-ar="name@example.com" data-ph-en="name@example.com" />
+          </div>
+          <div class="field">
+            <label><span data-lang-ar>كلمة المرور</span><span data-lang-en>Password</span></label>
+            <input class="input" type="password" required data-ph-ar="••••••••" data-ph-en="••••••••" />
+            <div style="text-align:end;margin-block-start:8px"><a href="#" style="color:var(--teal-dark);font-size:.86rem;font-weight:600"><span data-lang-ar>نسيت كلمة المرور؟</span><span data-lang-en>Forgot password?</span></a></div>
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" type="submit"><span data-lang-ar>دخول</span><span data-lang-en>Log in</span></button>
+        </form>
+
+        <p class="auth-alt"><span data-lang-ar>ليس لديك حساب؟</span><span data-lang-en>Don't have an account?</span>
+          <a href="register.html"><span data-lang-ar>سجّل الآن</span><span data-lang-en>Sign up</span></a></p>
+
+        <div class="demo-hint">
+          <span data-lang-ar>عرض تجريبي: ادخل أي بيانات، أو جرّب لوحة</span><span data-lang-en>Demo: enter anything, or jump to a</span>
+          <a href="donor-dashboard.html"><span data-lang-ar>المتبرع</span><span data-lang-en>donor</span></a> ·
+          <a href="hospital-dashboard.html"><span data-lang-ar>المستشفى</span><span data-lang-en>hospital</span></a> ·
+          <a href="admin-dashboard.html"><span data-lang-ar>الإدارة</span><span data-lang-en>admin</span></a>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إدارة مستشفى | Manage hospital — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <div data-side="admin" data-active="hospitals"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="إدارة مستشفى" data-title-en="Manage hospital"></div>
+      <div class="content">
+
+        <a href="admin-hospitals.html" class="back-link">← <span data-lang-ar>عودة للمستشفيات</span><span
+            data-lang-en>Back to hospitals</span></a>
+
+        <!-- header -->
+        <div class="card hosp-header">
+          <div class="hh-ic">🏥</div>
+          <div class="hh-main">
+            <div class="hh-top">
+              <h2><span data-lang-ar>مستشفى البشير</span><span data-lang-en>Al-Bashir Hospital</span></h2>
+              <span class="badge badge-fulfilled" id="hStatus"><span data-lang-ar>معتمد</span><span
+                  data-lang-en>Approved</span></span>
+            </div>
+            <div class="rr-meta">
+              <span class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
+                  height="15">
+                  <path d="M12 21s7-6.3 7-11a7 7 0 10-14 0c0 4.7 7 11 7 11z" />
+                  <circle cx="12" cy="10" r="2.5" />
+                </svg><span data-lang-ar>عمّان</span><span data-lang-en>Amman</span></span>
+              <span class="meta"><span data-lang-ar>رقم الترخيص: MOH-40219</span><span data-lang-en>License:
+                  MOH-40219</span></span>
+              <span class="meta"><span data-lang-ar>عضو منذ يناير ٢٠٢٥</span><span data-lang-en>Member since Jan
+                  2025</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="manage-grid">
+          <!-- left: stats + requests -->
+          <div>
+            <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:16px">
+              <div class="stat">
+                <div class="num">14</div>
+                <div class="lbl"><span data-lang-ar>إجمالي الطلبات</span><span data-lang-en>Total requests</span></div>
+              </div>
+              <div class="stat">
+                <div class="num crimson">2</div>
+                <div class="lbl"><span data-lang-ar>طلبات نشطة</span><span data-lang-en>Active</span></div>
+              </div>
+              <div class="stat">
+                <div class="num gold">11</div>
+                <div class="lbl"><span data-lang-ar>مكتملة</span><span data-lang-en>Fulfilled</span></div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-block-start:22px">
+              <div class="toolbar">
+                <h3 class="block-title"><span data-lang-ar>أحدث طلبات المستشفى</span><span data-lang-en>Recent hospital
+                    requests</span></h3>
+              </div>
+              <div class="table-wrap" style="border:0">
+                <table class="data">
+                  <thead>
+                    <tr>
+                      <th><span data-lang-ar>الطلب</span><span data-lang-en>Request</span></th>
+                      <th><span data-lang-ar>الفصيلة</span><span data-lang-en>Type</span></th>
+                      <th><span data-lang-ar>الحالة</span><span data-lang-en>Status</span></th>
+                      <th><span data-lang-ar>التاريخ</span><span data-lang-en>Date</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="reqBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- right: subscription + actions -->
+          <aside class="stack" style="--stack:22px">
+            <div class="card sub-card">
+              <div class="sub-head">
+                <span class="badge badge-fulfilled"><span data-lang-ar>مسؤول التواصل</span><span data-lang-en>Contact
+                    person</span></span>
+                <h3><span data-lang-ar>د. أحمد سرحان</span><span data-lang-en>Dr. Ahmad Sarhan</span></h3>
+              </div>
+              <ul class="sub-meta">
+                <li><span class="sm-k"><span data-lang-ar>البريد الإلكتروني</span><span
+                      data-lang-en>Email</span></span><strong style="direction:ltr">ahmad.sarhan@bashir.jo</strong></li>
+                <li><span class="sm-k"><span data-lang-ar>رقم الهاتف</span><span data-lang-en>Phone</span></span><strong
+                    style="direction:ltr">+962 79 555 0132</strong></li>
+                <li><span class="sm-k"><span data-lang-ar>تاريخ التعيين</span><span data-lang-en>Appointed
+                      on</span></span><strong style="direction:ltr">19/01/2025</strong></li>
+              </ul>
+              <p class="card-note"><span data-lang-ar>الوصول للمنصة مجاني للمستشفيات.</span><span data-lang-en>Platform
+                  access is free for hospitals.</span></p>
+            </div>
+
+            <div class="card">
+              <h3 class="block-title" style="margin-block-end:14px"><span data-lang-ar>إجراءات الإدارة</span><span
+                  data-lang-en>Management actions</span></h3>
+              <div class="stack" style="--stack:10px">
+                <a href="admin-hospital-edit.html" class="btn btn-ghost btn-block act-l">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z" />
+                  </svg>
+                  <span data-lang-ar>تعديل بيانات المستشفى</span><span data-lang-en>Edit hospital details</span></a>
+                <button class="btn btn-ghost btn-block act-l"
+                  onclick="showToast(currentLang()==='ar'?'تم إرسال رابط إعادة التعيين (عرض تجريبي)':'Reset link sent (demo)','info')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="7.5" cy="15.5" r="3.5" />
+                    <path d="M10 13l9-9M17 4l3 3M15 6l2 2" />
+                  </svg>
+                  <span data-lang-ar>إعادة تعيين كلمة المرور</span><span data-lang-en>Reset password</span></button>
+                <a href="hospital-requests.html" class="btn btn-ghost btn-block act-l">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"
+                    stroke-linecap="round">
+                    <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+                  </svg>
+                  <span data-lang-ar>عرض كل الطلبات</span><span data-lang-en>View all requests</span></a>
+              </div>
+
+              <hr class="divider" />
+
+              <div class="danger">
+                <div class="danger-head"><span data-lang-ar>منطقة حسّاسة</span><span data-lang-en>Danger zone</span>
+                </div>
+                <div class="row-between" style="gap:12px">
+                  <div>
+                    <strong><span data-lang-ar>تعليق الحساب</span><span data-lang-en>Suspend account</span></strong>
+                    <p class="muted" style="font-size:.85rem"><span data-lang-ar>يوقف نشر الطلبات مؤقتاً.</span><span
+                        data-lang-en>Temporarily stops new requests.</span></p>
+                  </div>
+                  <button class="btn btn-sm suspend-btn" id="suspBtn" onclick="toggleSuspend()"><span
+                      data-lang-ar>تعليق</span><span data-lang-en>Suspend</span></button>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    let suspended = false;
+
+    function pageRender() {
+      const rows = DATA.requests.filter(r => r.hospital.en === "Al-Bashir Hospital").concat(DATA.requests.slice(0, 3)).slice(0, 4);
+      document.getElementById("reqBody").innerHTML = rows.map(r => `
+        <tr>
+          <td><strong style="font-family:var(--font-display);direction:ltr">${r.id}</strong></td>
+          <td><span class="bt-chip">${r.bt}</span></td>
+          <td>${statusBadge(r.status)}</td>
+          <td style="direction:ltr;white-space:nowrap">${fmtDate(r.posted)}</td>
+        </tr>`).join("");
+    }
+
+    function toggleSuspend() {
+      suspended = !suspended;
+      const badge = document.getElementById("hStatus");
+      const btn = document.getElementById("suspBtn");
+      if (suspended) {
+        badge.className = "badge badge-unverified";
+        badge.innerHTML = `<span data-lang-ar>معلّق</span><span data-lang-en>Suspended</span>`;
+        btn.classList.add("is-on");
+        btn.innerHTML = `<span data-lang-ar>إعادة تفعيل</span><span data-lang-en>Reactivate</span>`;
+        showToast({ ar: "تم تعليق الحساب", en: "Account suspended" }, "error");
+      } else {
+        badge.className = "badge badge-fulfilled";
+        badge.innerHTML = `<span data-lang-ar>معتمد</span><span data-lang-en>Approved</span>`;
+        btn.classList.remove("is-on");
+        btn.innerHTML = `<span data-lang-ar>تعليق</span><span data-lang-en>Suspend</span>`;
+        showToast({ ar: "تمت إعادة التفعيل", en: "Reactivated" }, "success");
+      }
+      applyLang(currentLang());
+    }
+  </script>
+</body>
+
+</html>

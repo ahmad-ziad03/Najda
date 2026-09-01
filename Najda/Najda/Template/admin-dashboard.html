@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة الإدارة | Admin — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div data-side="admin" data-active="dash"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="نظرة عامة" data-title-en="Overview"></div>
+      <div class="content">
+
+        <div class="page-head">
+          <h2 class="page-head-title"><span data-lang-ar>نظرة عامة على المنصة</span><span data-lang-en>Platform overview</span></h2>
+          <p class="muted"><span data-lang-ar>مؤشرات الأداء الرئيسية لنجدة هذا الشهر.</span><span data-lang-en>Key performance indicators for Najda this month.</span></p>
+        </div>
+
+        <div class="grid status-grid">
+          <div class="card status-card"><div class="sc-ic pine">👥</div><div><div class="sc-lbl"><span data-lang-ar>إجمالي المتبرعين</span><span data-lang-en>Total donors</span></div><div class="sc-val">4,200</div><div class="sc-hint" style="color:var(--ok)">▲ 8% <span data-lang-ar>هذا الشهر</span><span data-lang-en>this month</span></div></div></div>
+          <div class="card status-card"><div class="sc-ic warn">🏥</div><div><div class="sc-lbl"><span data-lang-ar>مستشفيات معتمدة</span><span data-lang-en>Approved hospitals</span></div><div class="sc-val">32</div><div class="sc-hint" style="color:var(--warn)">1 <span data-lang-ar>بانتظار المراجعة</span><span data-lang-en>pending</span></div></div></div>
+          <div class="card status-card"><div class="sc-ic crimson">🩸</div><div><div class="sc-lbl"><span data-lang-ar>وحدات موفّرة</span><span data-lang-en>Units provided</span></div><div class="sc-val">1,850</div><div class="sc-hint" style="color:var(--ok)">▲ 12%</div></div></div>
+          <div class="card status-card"><div class="sc-ic ok">✅</div><div><div class="sc-lbl"><span data-lang-ar>فصائل موثّقة</span><span data-lang-en>Verified types</span></div><div class="sc-val">68%</div><div class="sc-hint"><span data-lang-ar>من المتبرعين</span><span data-lang-en>of donors</span></div></div></div>
+        </div>
+
+        <div class="dash-2col">
+          <!-- demand by type -->
+          <section class="card">
+            <div class="toolbar">
+              <h3 class="block-title"><span data-lang-ar>الطلب حسب الفصيلة</span><span data-lang-en>Demand by blood type</span></h3>
+              <span class="badge badge-neutral"><span data-lang-ar>آخر ٣٠ يوماً</span><span data-lang-en>Last 30 days</span></span>
+            </div>
+            <div id="demandChart" class="demand"></div>
+          </section>
+
+          <!-- activity -->
+          <aside class="card">
+            <h3 class="block-title" style="margin-block-end:16px"><span data-lang-ar>أحدث النشاطات</span><span data-lang-en>Recent activity</span></h3>
+            <div id="activity" class="activity"></div>
+          </aside>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function pageRender(){
+      const demand=[["O+",78],["O-",52],["A+",61],["A-",28],["B+",44],["B-",19],["AB+",15],["AB-",9]];
+      const max=Math.max(...demand.map(d=>d[1]));
+      document.getElementById("demandChart").innerHTML = demand.map(([bt,v])=>`
+        <div class="dm-col">
+          <div class="dm-bar" style="height:${(v/max*160)}px">
+            <span class="dm-v">${v}</span>
+          </div>
+          <span class="bt-chip">${bt}</span>
+        </div>`).join("");
+
+      const acts=[
+        ["🩸","تبرّع جديد وثّقته مستشفى البشير","New donation verified by Al-Bashir","قبل ٥ دقائق","5m ago"],
+        ["👤","انضمّ ١٢ متبرعاً جديداً","12 new donors joined","قبل ساعة","1h ago"],
+        ["🏥","طلب اعتماد من بنك الدم الوطني","Approval request from National Blood Bank","قبل ٣ ساعات","3h ago"],
+        ["✅","اكتمل الطلب R-1030 بنجاح","Request R-1030 fulfilled","قبل ٦ ساعات","6h ago"],
+      ];
+      document.getElementById("activity").innerHTML = acts.map(a=>`
+        <div class="act-item">
+          <span class="act-ic">${a[0]}</span>
+          <div class="act-body">
+            <p><span data-lang-ar>${a[1]}</span><span data-lang-en>${a[2]}</span></p>
+            <span class="act-time"><span data-lang-ar>${a[3]}</span><span data-lang-en>${a[4]}</span></span>
+          </div>
+        </div>`).join("");
+    }
+  </script>
+</body>
+</html>

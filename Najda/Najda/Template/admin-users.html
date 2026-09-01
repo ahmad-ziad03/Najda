@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المتبرعون | Donors — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div data-side="admin" data-active="users"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="المتبرعون" data-title-en="Donors"></div>
+      <div class="content">
+
+        <div class="page-head">
+          <h2 class="page-head-title"><span data-lang-ar>إدارة المتبرعين</span><span data-lang-en>Manage donors</span></h2>
+          <p class="muted"><span data-lang-ar>جميع المتبرعين المسجّلين في المنصة.</span><span data-lang-en>All donors registered on the platform.</span></p>
+        </div>
+
+        <div class="filters">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+            <input class="input" data-ph-ar="ابحث بالاسم أو المدينة" data-ph-en="Search by name or city" oninput="render()" id="q" />
+          </div>
+          <select class="select" id="fBt" onchange="render()">
+            <option value="" data-ar="كل الفصائل" data-en="All types">كل الفصائل</option>
+          </select>
+          <select class="select" id="fVer" onchange="render()">
+            <option value="" data-ar="الكل" data-en="All">الكل</option>
+            <option value="1" data-ar="موثّق" data-en="Verified">موثّق</option>
+            <option value="0" data-ar="غير موثّق" data-en="Unverified">غير موثّق</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th><span data-lang-ar>المتبرع</span><span data-lang-en>Donor</span></th>
+              <th><span data-lang-ar>الفصيلة</span><span data-lang-en>Type</span></th>
+              <th><span data-lang-ar>المدينة</span><span data-lang-en>City</span></th>
+              <th><span data-lang-ar>التبرعات</span><span data-lang-en>Donations</span></th>
+              <th><span data-lang-ar>التوثيق</span><span data-lang-en>Verified</span></th>
+              <th><span data-lang-ar>التوفّر</span><span data-lang-en>Available</span></th>
+              <th></th>
+            </tr></thead>
+            <tbody id="body"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function pageRender(){
+      document.getElementById("fBt").innerHTML =
+        `<option value="" data-ar="كل الفصائل" data-en="All types">كل الفصائل</option>` +
+        DATA.bloodTypes.map(b=>`<option value="${b}">${b}</option>`).join("");
+      render();
+    }
+    function render(){
+      const q=(document.getElementById("q").value||"").toLowerCase();
+      const bt=document.getElementById("fBt").value;
+      const ver=document.getElementById("fVer").value;
+      let list=DATA.donors.filter(d=>{
+        if(bt && d.bt!==bt) return false;
+        if(ver!=="" && (d.verified?"1":"0")!==ver) return false;
+        if(q){ const hay=(d.name.ar+d.name.en+d.city.ar+d.city.en).toLowerCase(); if(!hay.includes(q)) return false; }
+        return true;
+      });
+      document.getElementById("body").innerHTML = list.map(d=>`
+        <tr>
+          <td><div class="who"><span class="avatar" style="inline-size:36px;block-size:36px;font-size:.9rem">${d.name.ar[0]}</span><span class="nm"><span data-lang-ar>${d.name.ar}</span><span data-lang-en>${d.name.en}</span></span></div></td>
+          <td><span class="bt-chip">${d.bt}</span></td>
+          <td><span data-lang-ar>${d.city.ar}</span><span data-lang-en>${d.city.en}</span></td>
+          <td style="direction:ltr">${d.donations}</td>
+          <td>${d.verified
+            ? `<span class="badge badge-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="12" height="12" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span data-lang-ar>موثّق</span><span data-lang-en>Verified</span></span>`
+            : `<span class="badge badge-unverified"><span data-lang-ar>غير موثّق</span><span data-lang-en>Unverified</span></span>`}</td>
+          <td>${d.available
+            ? `<span class="dot-yes"></span><span data-lang-ar>متاح</span><span data-lang-en>Yes</span>`
+            : `<span class="dot-no"></span><span data-lang-ar>لا</span><span data-lang-en>No</span>`}</td>
+          <td><button class="btn btn-ghost btn-sm"><span data-lang-ar>التفاصيل</span><span data-lang-en>Details</span></button></td>
+        </tr>`).join("")
+        || `<tr><td colspan="7"><div class="empty">${IC.users}<p><span data-lang-ar>لا يوجد متبرعون مطابقون.</span><span data-lang-en>No matching donors.</span></p></div></td></tr>`;
+      applyLang(currentLang());
+    }
+    document.addEventListener("langchange", ()=>{
+      document.querySelectorAll("select option[data-ar]").forEach(o=>o.textContent=o.getAttribute("data-"+currentLang()));
+    });
+    document.addEventListener("DOMContentLoaded", ()=>setTimeout(()=>{
+      document.querySelectorAll("select option[data-ar]").forEach(o=>o.textContent=o.getAttribute("data-"+currentLang()));
+    },0));
+  </script>
+</body>
+</html>

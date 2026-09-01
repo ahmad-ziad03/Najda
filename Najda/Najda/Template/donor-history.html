@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سجل التبرعات | Donation history — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div data-side="donor" data-active="history"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="سجل التبرعات" data-title-en="Donation history"></div>
+      <div class="content">
+
+        <div class="page-head">
+          <h2 class="page-head-title"><span data-lang-ar>سجل تبرعاتك</span><span data-lang-en>Your donation history</span></h2>
+          <p class="muted"><span data-lang-ar>كل تبرّع هنا موثّق من المستشفى.</span><span data-lang-en>Every donation here is hospital-verified.</span></p>
+        </div>
+
+        <!-- eligibility banner -->
+        <div class="card elig">
+          <div class="elig-ic">🩸</div>
+          <div class="elig-body">
+            <div class="row-between">
+              <strong><span data-lang-ar>أنت مؤهّل للتبرّع الآن</span><span data-lang-en>You're eligible to donate now</span></strong>
+              <span class="badge badge-fulfilled"><span data-lang-ar>جاهز</span><span data-lang-en>Ready</span></span>
+            </div>
+            <div class="progress" style="margin-block:10px"><i style="width:100%"></i></div>
+            <p class="muted" style="font-size:.88rem"><span data-lang-ar>مرّ ٥٦ يوماً منذ آخر تبرّع (٢ يوليو ٢٠٢٥). حافظ على استعدادك!</span><span data-lang-en>56 days since your last donation (Jul 2, 2025). Stay ready!</span></p>
+          </div>
+        </div>
+
+        <!-- summary stats -->
+        <div class="grid status-grid" style="margin-block:22px">
+          <div class="stat"><div class="num">4</div><div class="lbl"><span data-lang-ar>إجمالي التبرعات</span><span data-lang-en>Total donations</span></div></div>
+          <div class="stat"><div class="num crimson">~12</div><div class="lbl"><span data-lang-ar>حياة يُحتمل إنقاذها</span><span data-lang-en>Lives possibly saved</span></div></div>
+          <div class="stat"><div class="num gold">4</div><div class="lbl"><span data-lang-ar>تبرعات موثّقة</span><span data-lang-en>Verified donations</span></div></div>
+          <div class="stat"><div class="num">O+</div><div class="lbl"><span data-lang-ar>الفصيلة الموثّقة</span><span data-lang-en>Verified type</span></div></div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr>
+                <th><span data-lang-ar>رقم</span><span data-lang-en>ID</span></th>
+                <th><span data-lang-ar>التاريخ</span><span data-lang-en>Date</span></th>
+                <th><span data-lang-ar>المستشفى</span><span data-lang-en>Hospital</span></th>
+                <th><span data-lang-ar>الفصيلة</span><span data-lang-en>Type</span></th>
+                <th><span data-lang-ar>الحالة</span><span data-lang-en>Status</span></th>
+              </tr>
+            </thead>
+            <tbody id="histBody"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function pageRender(){
+      document.getElementById("histBody").innerHTML = DATA.history.map(h=>`
+        <tr>
+          <td style="direction:ltr">${h.id}</td>
+          <td style="direction:ltr">${fmtDate(h.date)}</td>
+          <td><div class="who"><span class="avatar" style="inline-size:34px;block-size:34px;font-size:.8rem">🏥</span><span class="nm"><span data-lang-ar>${h.hospital.ar}</span><span data-lang-en>${h.hospital.en}</span></span></div></td>
+          <td><span class="bt-chip">${h.bt}</span></td>
+          <td>${statusBadge(h.status)}</td>
+        </tr>`).join("");
+    }
+  </script>
+</body>
+</html>

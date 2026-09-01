@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ملفي الشخصي | My profile — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <div data-side="donor" data-active="profile"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="ملفي الشخصي" data-title-en="My profile"></div>
+      <div class="content">
+
+        <div class="profile-grid">
+          <!-- identity card -->
+          <aside class="card profile-id">
+            <div id="profToken"></div>
+            <h3 class="prof-name"><span data-lang-ar>سامر الخطيب</span><span data-lang-en>Samer Al-Khatib</span></h3>
+            <p class="muted"><span data-lang-ar>متبرع · عمّان</span><span data-lang-en>Donor · Amman</span></p>
+            <span class="badge badge-verified" style="margin-block:12px"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="3" width="12" height="12" stroke-linecap="round">
+                <path d="M5 13l4 4L19 7" />
+              </svg><span data-lang-ar>فصيلة موثّقة</span><span data-lang-en>Verified type</span></span>
+            <div class="prof-mini">
+              <div>
+                <div class="pm-num">4</div>
+                <div class="pm-lbl"><span data-lang-ar>تبرعات</span><span data-lang-en>Donations</span></div>
+              </div>
+              <div>
+                <div class="pm-num">O+</div>
+                <div class="pm-lbl"><span data-lang-ar>الفصيلة</span><span data-lang-en>Type</span></div>
+              </div>
+            </div>
+            <div class="verify-info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 8v4M12 16h.01" stroke-linecap="round" />
+              </svg>
+              <span data-lang-ar>وُثّقت فصيلتك في مستشفى البشير بتاريخ ١٩ يناير ٢٠٢٥.</span><span data-lang-en>Your type
+                was verified at Al-Bashir Hospital on Jan 19, 2025.</span>
+            </div>
+          </aside>
+
+          <!-- edit form -->
+          <section class="card">
+            <div class="toolbar">
+              <h3 class="block-title"><span data-lang-ar>المعلومات الشخصية</span><span data-lang-en>Personal
+                  information</span></h3>
+              <span class="badge badge-neutral"><span data-lang-ar>عرض تجريبي</span><span
+                  data-lang-en>Demo</span></span>
+            </div>
+
+            <form onsubmit="event.preventDefault(); saved(this);">
+              <div class="field-row">
+                <div class="field"><label><span data-lang-ar>الاسم الكامل</span><span data-lang-en>Full
+                      name</span></label><input class="input" value="سامر الخطيب" /></div>
+                <div class="field"><label><span data-lang-ar>رقم الهاتف</span><span
+                      data-lang-en>Phone</span></label><input class="input" type="tel" value="+962 79 000 0000"
+                    style="direction:ltr" /></div>
+              </div>
+              <div class="field"><label><span data-lang-ar>البريد الإلكتروني</span><span
+                    data-lang-en>Email</span></label><input class="input" type="email" value="samer@example.com"
+                  style="direction:ltr" /></div>
+              <div class="field-row">
+                <div class="field"><label><span data-lang-ar>المدينة</span><span data-lang-en>City</span></label><select
+                    class="select" id="citySel"></select></div>
+                <div class="field"><label><span data-lang-ar>المنطقة</span><span data-lang-en>Area</span></label><input
+                    class="input" value="الجبيهة" /></div>
+              </div>
+              <div class="field">
+                <label><span data-lang-ar>فصيلة الدم</span><span data-lang-en>Blood type</span></label>
+                <div class="locked-field" style="max-width:160px">
+                  <input class="input" value="O+" disabled style="direction:ltr" />
+                  <svg class="lock-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                    height="16">
+                    <rect x="5" y="11" width="14" height="10" rx="2" />
+                    <path d="M8 11V8a4 4 0 018 0v3" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <div class="hint"><span data-lang-ar>فصيلتك موثّقة ومقفلة — لا تُعدّل إلا من قبل مستشفى بعد إعادة الفحص
+                    المخبري.</span><span data-lang-en>Your type is verified and locked — it can only be changed by a
+                    hospital after a lab re-test.</span></div>
+              </div>
+
+              <hr class="divider" />
+
+              <div class="avail-row">
+                <div>
+                  <strong><span data-lang-ar>متاح للتبرّع</span><span data-lang-en>Available to donate</span></strong>
+                  <p class="muted" style="font-size:.88rem"><span data-lang-ar>أوقفه مؤقتاً إن كنت غير قادر على التبرّع
+                      حالياً.</span><span data-lang-en>Pause it if you can't donate right now.</span></p>
+                </div>
+                <label class="switch"><input type="checkbox" checked /><span class="track"></span></label>
+              </div>
+
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit"><span data-lang-ar>حفظ التغييرات</span><span
+                    data-lang-en>Save changes</span></button>
+                <button class="btn btn-ghost" type="button"><span data-lang-ar>إلغاء</span><span
+                    data-lang-en>Cancel</span></button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function pageRender() {
+      document.getElementById("profToken").innerHTML = droplet("O+", true, "lg");
+      const sel = document.getElementById("citySel");
+      sel.innerHTML = DATA.cities.map((c, i) => `<option data-ar="${c.ar}" data-en="${c.en}" ${i === 0 ? "selected" : ""}>${c.ar}</option>`).join("");
+    }
+    function saved(form) {
+      let n = form.querySelector(".form-actions .btn-primary");
+      const old = n.innerHTML;
+      n.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span data-lang-ar>تم الحفظ</span><span data-lang-en>Saved</span>`;
+      applyLang(currentLang());
+      showToast({ ar: "تم حفظ التغييرات", en: "Changes saved" }, "success");
+      setTimeout(() => { n.innerHTML = old; applyLang(currentLang()); }, 1600);
+    }
+    document.addEventListener("langchange", () => {
+      document.querySelectorAll("#citySel option[data-ar]").forEach(o => o.textContent = o.getAttribute("data-" + currentLang()));
+    });
+  </script>
+</body>
+
+</html>

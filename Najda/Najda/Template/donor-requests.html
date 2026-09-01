@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الطلبات المطابقة | Matched requests — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <div data-side="donor" data-active="requests"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="الطلبات المطابقة" data-title-en="Matched requests"></div>
+      <div class="content">
+
+        <div class="page-head">
+          <h2 class="page-head-title"><span data-lang-ar>طلبات تحتاج نجدتك</span><span data-lang-en>Requests that need
+              you</span></h2>
+          <p class="muted"><span data-lang-ar>مرتّبة حسب الأقرب والأكثر إلحاحاً. فصيلتك: <strong
+                style="color:var(--crimson)">O+</strong></span><span data-lang-en>Sorted by nearest and most urgent.
+              Your type: <strong style="color:var(--crimson)">O+</strong></span></p>
+        </div>
+
+        <div class="filters">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4-4" />
+            </svg>
+            <input class="input" data-ph-ar="ابحث عن مستشفى أو مدينة" data-ph-en="Search hospital or city"
+              oninput="applyFilters()" id="q" />
+          </div>
+          <select class="select" id="fStatus" onchange="applyFilters()">
+            <option value="" data-ar="كل الحالات" data-en="All statuses">كل الحالات</option>
+            <option value="urgent" data-ar="عاجل" data-en="Urgent">عاجل</option>
+            <option value="open" data-ar="مفتوح" data-en="Open">مفتوح</option>
+            <option value="matched" data-ar="تمت المطابقة" data-en="Matched">تمت المطابقة</option>
+          </select>
+          <select class="select" id="fCity" onchange="applyFilters()"></select>
+          <label class="check-inline"><input type="checkbox" id="fCompat" checked onchange="applyFilters()" /><span
+              data-lang-ar>المتوافقة مع فصيلتي فقط</span><span data-lang-en>Compatible with my type only</span></label>
+        </div>
+
+        <div id="reqList" class="stack" style="--stack:14px"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // O+ can receive from O+ and O-
+    const MY_COMPAT = ["O+", "O-"];
+
+    function pageRender() {
+      const city = document.getElementById("fCity");
+      city.innerHTML = `<option value="" data-ar="كل المدن" data-en="All cities">كل المدن</option>` +
+        DATA.cities.map(c => `<option value="${c.en}" data-ar="${c.ar}" data-en="${c.en}">${c.ar}</option>`).join("");
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const q = (document.getElementById("q").value || "").toLowerCase();
+      const st = document.getElementById("fStatus").value;
+      const ct = document.getElementById("fCity").value;
+      const compat = document.getElementById("fCompat").checked;
+
+      let list = DATA.requests.filter(r => {
+        if (r.status === "fulfilled") return false;
+        if (st && r.status !== st) return false;
+        if (ct && r.city.en !== ct) return false;
+        if (compat && !MY_COMPAT.includes(r.bt)) return false;
+        if (q) { const hay = (r.hospital.ar + r.hospital.en + r.city.ar + r.city.en).toLowerCase(); if (!hay.includes(q)) return false; }
+        return true;
+      });
+      // urgent first
+      const order = { urgent: 0, matched: 1, open: 2 };
+      list.sort((a, b) => order[a.status] - order[b.status]);
+
+      const box = document.getElementById("reqList");
+      box.innerHTML = list.length ? list.map(cardBig).join("")
+        : `<div class="empty card">${IC.search}<p><span data-lang-ar>لا توجد طلبات مطابقة للفلاتر المحددة.</span><span data-lang-en>No requests match the selected filters.</span></p></div>`;
+      applyLang(currentLang());
+    }
+
+    function cardBig(r) {
+      const compatBadge = MY_COMPAT.includes(r.bt)
+        ? `<span class="badge badge-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="12" height="12" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span data-lang-ar>متوافق مع فصيلتك</span><span data-lang-en>Compatible</span></span>` : "";
+      return `<div class="req-row card">
+        ${droplet(r.bt, true, "sm")}
+        <div class="rr-main">
+          <div class="rr-top">
+            <strong><span data-lang-ar>${r.hospital.ar}</span><span data-lang-en>${r.hospital.en}</span></strong>
+            ${statusBadge(r.status)} ${compatBadge}
+          </div>
+          <p class="muted" style="font-size:.9rem;margin-block:2px 6px"><span data-lang-ar>${r.note.ar}</span><span data-lang-en>${r.note.en}</span></p>
+          <div class="rr-meta">
+            <span class="meta">${IC.pin}<span data-lang-ar>${r.city.ar}</span><span data-lang-en>${r.city.en}</span></span>
+            <span class="meta">${IC.drop}<span>${r.units} <span data-lang-ar>وحدات</span><span data-lang-en>units</span></span></span>
+            <span class="meta">${IC.users}<span>${r.matched} <span data-lang-ar>مطابَق</span><span data-lang-en>matched</span></span></span>
+            <span class="meta">${IC.clock}<span>${fmtDate(r.posted)}</span></span>
+          </div>
+        </div>
+        <div class="rr-actions">
+          <a href="#" class="btn btn-donate btn-sm" onclick="respond(event)"><span data-lang-ar>استجب الآن</span><span data-lang-en>Respond now</span></a>
+        </div>
+      </div>`;
+    }
+
+    function respond(e) {
+      e.preventDefault();
+      const btn = e.currentTarget;
+      btn.classList.remove("btn-donate"); btn.classList.add("btn-soft");
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span data-lang-ar>تم إرسال استجابتك</span><span data-lang-en>Response sent</span>`;
+      applyLang(currentLang());
+      showToast({ ar: "تم إرسال استجابتك للمستشفى", en: "Your response was sent to the hospital" }, "success");
+    }
+
+    // localize <option> text (which can't use dual spans) on language change
+    function localizeOptions() {
+      document.querySelectorAll("select option[data-ar]").forEach(o => {
+        o.textContent = o.getAttribute("data-" + currentLang());
+      });
+    }
+    document.addEventListener("langchange", localizeOptions);
+    document.addEventListener("DOMContentLoaded", () => setTimeout(localizeOptions, 0));
+  </script>
+</body>
+
+</html>

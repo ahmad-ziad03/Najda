@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة المتبرع | Donor dashboard — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div data-side="donor" data-active="dash"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="لوحتي" data-title-en="My dashboard"></div>
+      <div class="content">
+
+        <div class="welcome">
+          <div>
+            <h2 class="page-head-title"><span data-lang-ar>أهلاً، سامر 👋</span><span data-lang-en>Hi, Samer 👋</span></h2>
+            <p class="muted"><span data-lang-ar>شكراً لكونك مستعداً دائماً للنجدة. هذه حالتك اليوم.</span><span data-lang-en>Thanks for always being ready to help. Here's your status today.</span></p>
+          </div>
+          <a href="donor-requests.html" class="btn btn-donate"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z"/></svg><span data-lang-ar>تصفّح الطلبات</span><span data-lang-en>Browse requests</span></a>
+        </div>
+
+        <!-- status row -->
+        <div class="grid status-grid">
+          <div class="card status-card">
+            <div id="dashToken"></div>
+            <div>
+              <div class="sc-lbl"><span data-lang-ar>فصيلة دمك</span><span data-lang-en>Your blood type</span></div>
+              <div class="sc-val" style="direction:ltr">O+</div>
+              <span class="badge badge-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="12" height="12" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span data-lang-ar>موثّقة</span><span data-lang-en>Verified</span></span>
+            </div>
+          </div>
+
+          <div class="card status-card">
+            <div class="sc-ic ok">✓</div>
+            <div style="flex:1">
+              <div class="sc-lbl"><span data-lang-ar>حالة التوفّر</span><span data-lang-en>Availability</span></div>
+              <div class="sc-val sm"><span data-lang-ar>متاح للتبرّع</span><span data-lang-en>Available</span></div>
+              <label class="switch"><input type="checkbox" checked onchange="toggleAvail(this)" /><span class="track"></span></label>
+            </div>
+          </div>
+
+          <div class="card status-card">
+            <div class="sc-ic warn">⏳</div>
+            <div>
+              <div class="sc-lbl"><span data-lang-ar>الأهلية القادمة</span><span data-lang-en>Next eligible</span></div>
+              <div class="sc-val sm" style="direction:ltr">27/08/2025</div>
+              <div class="sc-hint"><span data-lang-ar>بعد ٥٦ يوماً من آخر تبرّع</span><span data-lang-en>56 days after last donation</span></div>
+            </div>
+          </div>
+
+          <div class="card status-card">
+            <div class="sc-ic pine">🩸</div>
+            <div>
+              <div class="sc-lbl"><span data-lang-ar>إجمالي تبرعاتك</span><span data-lang-en>Total donations</span></div>
+              <div class="sc-val">4</div>
+              <div class="sc-hint"><span data-lang-ar>ربما أنقذت حتى ١٢ حياة</span><span data-lang-en>Up to 12 lives possibly saved</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- matched requests -->
+        <div class="section-block">
+          <div class="row-between" style="margin-block-end:16px">
+            <h3 class="block-title"><span data-lang-ar>طلبات تناسب فصيلتك</span><span data-lang-en>Requests matching your type</span></h3>
+            <a href="donor-requests.html" class="link-more"><span data-lang-ar>عرض الكل</span><span data-lang-en>View all</span> ←</a>
+          </div>
+          <div id="matchedList" class="stack" style="--stack:14px"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function toggleAvail(el){
+      const val = el.closest(".status-card").querySelector(".sc-val");
+      val.querySelector("[data-lang-ar]").textContent = el.checked ? "متاح للتبرّع" : "غير متاح حالياً";
+      val.querySelector("[data-lang-en]").textContent = el.checked ? "Available" : "Unavailable";
+    }
+    function pageRender(){
+      document.getElementById("dashToken").innerHTML = droplet("O+", true, "lg");
+      const matched = DATA.requests.filter(r => r.bt === "O+" || r.bt === "O-").filter(r=>r.status!=="fulfilled");
+      document.getElementById("matchedList").innerHTML = matched.map(r => rowRequest(r)).join("")
+        || `<div class="empty">${IC.search}<p><span data-lang-ar>لا توجد طلبات مطابقة حالياً.</span><span data-lang-en>No matching requests right now.</span></p></div>`;
+    }
+    function rowRequest(r){
+      return `<div class="req-row card">
+        ${droplet(r.bt, true, "sm")}
+        <div class="rr-main">
+          <div class="rr-top">
+            <strong><span data-lang-ar>${r.hospital.ar}</span><span data-lang-en>${r.hospital.en}</span></strong>
+            ${statusBadge(r.status)}
+          </div>
+          <div class="rr-meta">
+            <span class="meta">${IC.pin}<span data-lang-ar>${r.city.ar}</span><span data-lang-en>${r.city.en}</span></span>
+            <span class="meta">${IC.drop}<span>${r.units} <span data-lang-ar>وحدات</span><span data-lang-en>units</span></span></span>
+            <span class="meta">${IC.clock}<span>${fmtDate(r.posted)}</span></span>
+          </div>
+        </div>
+        <a href="donor-requests.html" class="btn btn-primary btn-sm"><span data-lang-ar>استجب</span><span data-lang-en>Respond</span></a>
+      </div>`;
+    }
+  </script>
+</body>
+</html>

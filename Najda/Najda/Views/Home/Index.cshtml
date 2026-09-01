@@ -1,0 +1,223 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "منصة التبرع بالدم";
+}
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+    <div class="wrap hero-inner">
+        <div class="hero-copy">
+            <span class="eyebrow"><span data-lang-ar>ينقذ الأرواح في الوقت الحرج</span><span data-lang-en>Saving lives at the critical moment</span></span>
+            <h1 class="hero-title">
+                <span data-lang-ar>كل دقيقة تفرق.<br><span class="accent">قطرة دمك</span> قد تكون النجدة.</span>
+                <span data-lang-en>Every minute counts.<br>Your <span class="accent">donation</span> can be the rescue.</span>
+            </h1>
+            <p class="hero-lead">
+                <span data-lang-ar>نجدة تربط المستشفيات المحتاجة للدم بالمتبرعين المتوافقين والأقرب جغرافياً — خلال دقائق، لا ساعات. مجانية للمتبرعين دائماً.</span>
+                <span data-lang-en>Najda connects hospitals in need with the closest compatible donors — in minutes, not hours. Always free for donors.</span>
+            </p>
+            <div class="hero-cta">
+                <a asp-controller="Account" asp-action="Register" class="btn btn-donate btn-lg">
+                    @Html.Icon("heart")
+                    <span data-lang-ar>سجّل كمتبرع</span><span data-lang-en>Become a donor</span>
+                </a>
+                <a asp-controller="Home" asp-action="About" class="btn btn-ghost btn-lg"><span data-lang-ar>كيف تعمل المنصة؟</span><span data-lang-en>How it works</span></a>
+            </div>
+            <div class="hero-trust">
+                <div class="ht-avatars"><span>س</span><span>ل</span><span>ر</span><span>+</span></div>
+                <p><span data-lang-ar><strong>@Model.TotalDonors</strong> متبرع مسجّل جاهز للنجدة</span><span data-lang-en><strong>@Model.TotalDonors</strong> registered donors ready to help</span></p>
+            </div>
+        </div>
+
+        <!-- Live urgent request preview (decorative) -->
+        <div class="hero-visual">
+            <div class="live-card card">
+                <div class="live-head">
+                    <span class="badge badge-urgent"><span data-lang-ar>عاجل الآن</span><span data-lang-en>Urgent now</span></span>
+                    <span class="meta"><span data-lang-ar>مستشفى البشير · عمّان</span><span data-lang-en>Al-Bashir · Amman</span></span>
+                </div>
+                <div class="live-body">
+                    @Html.Droplet("O-", true, "lg")
+                    <div>
+                        <div class="live-need"><span data-lang-ar>مطلوب</span><span data-lang-en>Needed</span> <strong>3</strong> <span data-lang-ar>وحدات</span><span data-lang-en>units</span></div>
+                        <div class="live-sub"><span data-lang-ar>حالة طوارئ — قسم العناية المركّزة</span><span data-lang-en>Emergency — intensive care</span></div>
+                    </div>
+                </div>
+                <div class="live-foot">
+                    <div class="live-matched"><span class="dotpulse"></span><span data-lang-ar>تمّت مطابقة متبرعَين قريبَين</span><span data-lang-en>2 nearby donors matched</span></div>
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-sm"><span data-lang-ar>استجب</span><span data-lang-en>Respond</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ============ STATS BAR ============ -->
+<section class="statbar">
+    <div class="wrap statbar-grid">
+        <div><div class="sb-num">@Model.AvailableDonors</div><div class="sb-lbl"><span data-lang-ar>متبرع متاح</span><span data-lang-en>Available donors</span></div></div>
+        <div><div class="sb-num crimson">@Model.UnitsProvided</div><div class="sb-lbl"><span data-lang-ar>وحدة دم تم توفيرها</span><span data-lang-en>Units provided</span></div></div>
+        <div><div class="sb-num">@Model.ApprovedHospitals</div><div class="sb-lbl"><span data-lang-ar>مستشفى شريك</span><span data-lang-en>Partner hospitals</span></div></div>
+        <div><div class="sb-num gold">‹ 15<span data-lang-ar> د</span><span data-lang-en>m</span></div><div class="sb-lbl"><span data-lang-ar>متوسط زمن المطابقة</span><span data-lang-en>Avg. match time</span></div></div>
+    </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section" id="how">
+    <div class="wrap center">
+        <span class="eyebrow"><span data-lang-ar>ثلاث خطوات</span><span data-lang-en>Three steps</span></span>
+        <h2 class="section-title"><span data-lang-ar>كيف تنقذ حياة عبر نجدة</span><span data-lang-en>How you save a life with Najda</span></h2>
+        <p class="section-lead"><span data-lang-ar>عملية بسيطة صُمّمت لتكون سريعة وقت الطوارئ.</span><span data-lang-en>A simple flow designed to be fast when it matters most.</span></p>
+    </div>
+    <div class="wrap steps-grid">
+        <div class="card card-hover step">
+            <div class="step-n">1</div>
+            <div class="step-ic">📝</div>
+            <h3><span data-lang-ar>سجّل فصيلتك وموقعك</span><span data-lang-en>Register your type &amp; location</span></h3>
+            <p><span data-lang-ar>أنشئ حساباً مجانياً وأدخل فصيلة دمك ومدينتك. تُوثّق فصيلتك تلقائياً بعد أول تبرّع فعلي.</span><span data-lang-en>Create a free account with your blood type and city. Your type is verified after your first real donation.</span></p>
+        </div>
+        <div class="card card-hover step">
+            <div class="step-n">2</div>
+            <div class="step-ic">🔔</div>
+            <h3><span data-lang-ar>استقبل الطلبات المطابقة</span><span data-lang-en>Get matched requests</span></h3>
+            <p><span data-lang-ar>عند وجود حالة عاجلة تناسب فصيلتك وقريبة منك، يصلك إشعار فوري. أنت تقرر متى تستجيب.</span><span data-lang-en>When an urgent case matches your type and is near you, you're notified instantly. You decide when to respond.</span></p>
+        </div>
+        <div class="card card-hover step">
+            <div class="step-n">3</div>
+            <div class="step-ic">❤️</div>
+            <h3><span data-lang-ar>تبرّع وأنقذ</span><span data-lang-en>Donate &amp; save</span></h3>
+            <p><span data-lang-ar>توجّه للمستشفى وتبرّع. يسجّل النظام تبرّعك ويذكّرك بموعد أهليتك القادم بعد ٥٦ يوماً.</span><span data-lang-en>Head to the hospital and donate. We log it and remind you when you're eligible again after 56 days.</span></p>
+        </div>
+    </div>
+</section>
+
+<!-- ============ LIVE REQUESTS (from database) ============ -->
+<section class="section section-alt">
+    <div class="wrap">
+        <div class="row-between" style="margin-block-end:26px">
+            <div>
+                <span class="eyebrow"><span data-lang-ar>مباشر</span><span data-lang-en>Live</span></span>
+                <h2 class="section-title" style="margin-block-end:0"><span data-lang-ar>طلبات تحتاج نجدتك الآن</span><span data-lang-en>Requests that need you now</span></h2>
+            </div>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-ghost"><span data-lang-ar>عرض الكل</span><span data-lang-en>View all</span></a>
+        </div>
+
+        <div class="grid req-grid">
+            @if (Model.LiveRequests.Any())
+            {
+                foreach (var r in Model.LiveRequests)
+                {
+                    <article class="card card-hover req-card">
+                        <div class="req-top">
+                            @Html.Droplet(r.BloodType, true, "sm")
+                            <div class="req-head">
+                                <div class="req-hosp"><span data-lang-ar>@r.Hospital?.Name</span><span data-lang-en>@(r.Hospital?.NameEn ?? r.Hospital?.Name)</span></div>
+                                <div class="meta">@Html.Icon("pin")<span><span data-lang-ar>@r.Hospital?.City</span><span data-lang-en>@(r.Hospital?.CityEn ?? r.Hospital?.City)</span></span></div>
+                            </div>
+                            @Html.RequestBadge(r.Priority, r.Status)
+                        </div>
+                        <div class="req-need">
+                            <span data-lang-ar>مطلوب <strong>@r.UnitsNeeded</strong> وحدات</span>
+                            <span data-lang-en><strong>@r.UnitsNeeded</strong> units needed</span>
+                        </div>
+                        <p class="req-note"><span data-lang-ar>@r.Department</span><span data-lang-en>@(r.DepartmentEn ?? r.Department)</span></p>
+                        <div class="req-foot">
+                            <span class="meta">@Html.Icon("users")<span>@r.Matches.Count <span data-lang-ar>مطابَق</span><span data-lang-en>matched</span></span></span>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-soft btn-sm"><span data-lang-ar>استجب</span><span data-lang-en>Respond</span></a>
+                        </div>
+                    </article>
+                }
+            }
+            else
+            {
+                <div class="empty card" style="grid-column:1/-1">
+                    @Html.Icon("search")
+                    <p><span data-lang-ar>لا توجد طلبات عاجلة حالياً. تفقّد لاحقاً.</span><span data-lang-en>No urgent requests right now. Check back soon.</span></p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ============ FOR HOSPITALS / BUSINESS ============ -->
+<section class="section">
+    <div class="wrap hosp-grid">
+        <div class="hosp-copy">
+            <span class="eyebrow"><span data-lang-ar>للمستشفيات وبنوك الدم</span><span data-lang-en>For hospitals &amp; blood banks</span></span>
+            <h2 class="section-title"><span data-lang-ar>أداة إدارية توفّر عليك ساعات البحث</span><span data-lang-en>An admin tool that saves you hours of searching</span></h2>
+            <p class="section-lead"><span data-lang-ar>انشر طلباً عاجلاً فيصل تلقائياً للمتبرعين المتوافقين والأقرب. تابع حالة كل طلب، ووثّق فصيلة المتبرع بعد تبرّعه — كل ذلك من لوحة واحدة.</span><span data-lang-en>Post an urgent request and reach the closest compatible donors automatically. Track each request and verify a donor's type after donation — all from one dashboard.</span></p>
+            <ul class="ticks">
+                <li><span data-lang-ar>مطابقة تلقائية حسب الفصيلة والموقع</span><span data-lang-en>Automatic matching by type &amp; location</span></li>
+                <li><span data-lang-ar>تحليلات توفّر المتبرعين حسب كل فصيلة</span><span data-lang-en>Analytics on donor availability per type</span></li>
+                <li><span data-lang-ar>توثيق فصيلة المتبرع بعد التبرّع الفعلي</span><span data-lang-en>Verify donor blood type after real donation</span></li>
+            </ul>
+            <div class="hosp-cta">
+                <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg"><span data-lang-ar>انضم كمستشفى</span><span data-lang-en>Join as a hospital</span></a>
+                <span class="hosp-note"><span data-lang-ar>مجانية للمتبرعين وللمستشفيات</span><span data-lang-en>Free for donors and hospitals</span></span>
+            </div>
+        </div>
+        <div class="hosp-visual">
+            <div class="mini-dash card">
+                <div class="md-head"><span data-lang-ar>توفّر المتبرعين</span><span data-lang-en>Donor availability</span></div>
+                <div class="md-bars">
+                    @{
+                        var avail = new (string bt, int pct)[] { ("O+", 82), ("A+", 64), ("B+", 47), ("O-", 23), ("AB-", 11) };
+                    }
+                    @foreach (var a in avail)
+                    {
+                        <div class="md-row">
+                            @Html.BtChip(a.bt)
+                            <div class="progress" style="flex:1"><i style="width:@(a.pct)%"></i></div>
+                            <span class="md-pct">@(a.pct)%</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ ETHICS NOTE ============ -->
+<section class="section-sm">
+    <div class="wrap ethic card">
+        <div class="ethic-ic">🛡️</div>
+        <div>
+            <h3><span data-lang-ar>مبدأنا: التبرّع لا يُباع</span><span data-lang-en>Our principle: donation is never sold</span></h3>
+            <p><span data-lang-ar>نجدة مجانية تماماً للمتبرعين وللمستشفيات بشكل دائم. تأتي مواردنا من حول المنصة: برنامج مكافآت مع شركاء تجاريين، ورعاة وإعلانات مسؤولة تناسب السياق الطبي — لا من التبرّع نفسه.</span><span data-lang-en>Najda is permanently free for both donors and hospitals. Our revenue comes from around the platform: a rewards program with commercial partners, and responsible sponsors and ads that fit the medical context — never from the donation itself.</span></p>
+        </div>
+    </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section section-alt">
+    <div class="wrap center">
+        <span class="eyebrow"><span data-lang-ar>قصص</span><span data-lang-en>Stories</span></span>
+        <h2 class="section-title"><span data-lang-ar>أشخاص صنعوا الفرق</span><span data-lang-en>People who made the difference</span></h2>
+    </div>
+    <div class="wrap grid quote-grid">
+        <figure class="card quote">
+            <blockquote><span data-lang-ar>"وصلني إشعار الساعة الثالثة فجراً، كانت الحالة قريبة من بيتي. أجمل شعور أن تكون النجدة."</span><span data-lang-en>"A notification reached me at 3am — the case was near my home. There's no better feeling than being the rescue."</span></blockquote>
+            <figcaption><span class="avatar">ل</span><span><strong data-lang-ar>ليلى منصور</strong><strong data-lang-en>Layla Mansour</strong><em data-lang-ar>متبرعة · إربد</em><em data-lang-en>Donor · Irbid</em></span></figcaption>
+        </figure>
+        <figure class="card quote">
+            <blockquote><span data-lang-ar>"كنا نتصل عشرات المكالمات لكل حالة. الآن الطلب يصل للمتبرع المناسب مباشرة. وفّر علينا وقتاً ثميناً."</span><span data-lang-en>"We used to make dozens of calls per case. Now the request reaches the right donor directly. It saves precious time."</span></blockquote>
+            <figcaption><span class="avatar">ب</span><span><strong data-lang-ar>د. أحمد سرحان</strong><strong data-lang-en>Dr. Ahmad Sarhan</strong><em data-lang-ar>بنك الدم · مستشفى البشير</em><em data-lang-en>Blood bank · Al-Bashir</em></span></figcaption>
+        </figure>
+        <figure class="card quote">
+            <blockquote><span data-lang-ar>"تبرّعت أول مرة عبر نجدة، ووثّقوا فصيلتي في المستشفى. الآن أطمئن أن بياناتي صحيحة."</span><span data-lang-en>"I donated for the first time through Najda and they verified my type at the hospital. Now I trust my data is correct."</span></blockquote>
+            <figcaption><span class="avatar">ع</span><span><strong data-lang-ar>عمر السالم</strong><strong data-lang-en>Omar Al-Salem</strong><em data-lang-ar>متبرع · المفرق</em><em data-lang-en>Donor · Mafraq</em></span></figcaption>
+        </figure>
+    </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="cta-band">
+    <div class="wrap cta-inner">
+        <h2><span data-lang-ar>انضم إلى مجتمع نجدة. كن النجدة القادمة.</span><span data-lang-en>Join the Najda community. Be the next rescue.</span></h2>
+        <p><span data-lang-ar>التسجيل يستغرق دقيقتين، والأثر يدوم مدى الحياة.</span><span data-lang-en>Signing up takes two minutes. The impact lasts a lifetime.</span></p>
+        <div class="cta-actions">
+            <a asp-controller="Account" asp-action="Register" class="btn btn-donate btn-lg"><span data-lang-ar>سجّل كمتبرع الآن</span><span data-lang-en>Register as a donor</span></a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-ghost btn-lg btn-ghost-light"><span data-lang-ar>انضم كمستشفى</span><span data-lang-en>Join as a hospital</span></a>
+        </div>
+    </div>
+</section>

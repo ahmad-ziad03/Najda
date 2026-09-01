@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>كيف تعمل نجدة | How Najda works</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div data-nav="about"></div>
+
+  <!-- intro -->
+  <header class="page-hero">
+    <div class="wrap center">
+      <span class="eyebrow"><span data-lang-ar>كيف تعمل المنصة</span><span data-lang-en>How it works</span></span>
+      <h1 class="page-hero-title"><span data-lang-ar>من الطلب العاجل إلى النجدة، خطوة بخطوة</span><span
+          data-lang-en>From urgent request to rescue, step by step</span></h1>
+      <p class="page-hero-lead"><span data-lang-ar>نجدة تحوّل عملية البحث الفوضوية عن متبرع إلى نظام منظّم وسريع يربط
+          المستشفى بالمتبرع المناسب خلال دقائق.</span><span data-lang-en>Najda turns the chaotic search for a donor into
+          an organized, fast system that connects a hospital to the right donor in minutes.</span></p>
+    </div>
+  </header>
+
+  <!-- the problem -->
+  <section class="section">
+    <div class="wrap prob-grid">
+      <div class="prob-before card">
+        <span class="badge badge-unverified"><span data-lang-ar>الطريقة التقليدية</span><span data-lang-en>The old
+            way</span></span>
+        <ul class="prob-list bad">
+          <li><span data-lang-ar>عشرات المكالمات العشوائية لكل حالة</span><span data-lang-en>Dozens of random calls per
+              case</span></li>
+          <li><span data-lang-ar>مجموعات تواصل غير منظّمة</span><span data-lang-en>Disorganized social media
+              groups</span></li>
+          <li><span data-lang-ar>ساعات ثمينة تُهدر في الطوارئ</span><span data-lang-en>Precious hours wasted in
+              emergencies</span></li>
+          <li><span data-lang-ar>لا تحقق من فصيلة المتبرع</span><span data-lang-en>No verification of donor's
+              type</span></li>
+        </ul>
+      </div>
+      <div class="prob-arrow" aria-hidden="true">→</div>
+      <div class="prob-after card">
+        <span class="badge badge-fulfilled"><span data-lang-ar>مع نجدة</span><span data-lang-en>With Najda</span></span>
+        <ul class="prob-list good">
+          <li><span data-lang-ar>مطابقة تلقائية فورية</span><span data-lang-en>Instant automatic matching</span></li>
+          <li><span data-lang-ar>وصول مباشر للمتبرع الأقرب والمتوافق</span><span data-lang-en>Direct reach to the
+              nearest compatible donor</span></li>
+          <li><span data-lang-ar>متوسط مطابقة أقل من ٩ دقائق</span><span data-lang-en>Average match under 9
+              minutes</span></li>
+          <li><span data-lang-ar>توثيق الفصيلة في المستشفى بعد التبرّع</span><span data-lang-en>Type verified at the
+              hospital after donation</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- donor flow -->
+  <section class="section section-alt">
+    <div class="wrap">
+      <span class="eyebrow"><span data-lang-ar>للمتبرعين</span><span data-lang-en>For donors</span></span>
+      <h2 class="section-title"><span data-lang-ar>رحلتك كمتبرع</span><span data-lang-en>Your journey as a donor</span>
+      </h2>
+      <div class="flow" id="donorFlow"></div>
+    </div>
+  </section>
+
+  <!-- verification explainer (key differentiator) -->
+  <section class="section">
+    <div class="wrap verify-grid">
+      <div>
+        <span class="eyebrow"><span data-lang-ar>الثقة أولاً</span><span data-lang-en>Trust first</span></span>
+        <h2 class="section-title"><span data-lang-ar>كيف نضمن صحة فصيلة الدم</span><span data-lang-en>How we ensure the
+            blood type is correct</span></h2>
+        <p class="section-lead"><span data-lang-ar>قد لا يعرف المتبرع فصيلته بدقّة. لذلك تُعتبر الفصيلة المُدخلة
+            "مبدئية" فقط لتضييق دائرة البحث، ويعيد المستشفى فحصها مخبرياً قبل أي نقل — وهذا هو البروتوكول الطبي المعتمد
+            أصلاً.</span><span data-lang-en>A donor may not know their exact type. So the entered type is "preliminary"
+            — used only to narrow the search. The hospital re-tests it in the lab before any transfusion, which is the
+            standard medical protocol anyway.</span></p>
+        <div class="verify-steps">
+          <div class="vstep">
+            <div class="vstep-token">$$UNVERIFIED$$</div>
+            <div><strong data-lang-ar>عند التسجيل</strong><strong data-lang-en>At registration</strong>
+              <p data-lang-ar>الفصيلة غير موثّقة — تُستخدم للفلترة المبدئية فقط.</p>
+              <p data-lang-en>Type is unverified — used for preliminary filtering only.</p>
+            </div>
+          </div>
+          <div class="vstep">
+            <div class="vstep-token">$$VERIFIED$$</div>
+            <div><strong data-lang-ar>بعد أول تبرّع</strong><strong data-lang-en>After first donation</strong>
+              <p data-lang-ar>المستشفى تؤكّد الفصيلة أو تصحّحها، فتصبح موثّقة وترتفع أولويتك في المطابقة.</p>
+              <p data-lang-en>The hospital confirms or corrects the type; it becomes verified and raises your matching
+                priority.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="compat card">
+        <h3 class="compat-title"><span data-lang-ar>من يتبرّع لمن؟</span><span data-lang-en>Who can donate to
+            whom?</span></h3>
+        <p class="compat-sub"><span data-lang-ar>توافق خلايا الدم الحمراء</span><span data-lang-en>Red blood cell
+            compatibility</span></p>
+        <div class="compat-table" id="compatTable"></div>
+        <p class="compat-note"><span data-lang-ar><strong>O−</strong> متبرع عام · <strong>AB+</strong> مستقبِل
+            عام</span><span data-lang-en><strong>O−</strong> universal donor · <strong>AB+</strong> universal
+            recipient</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- revenue model -->
+  <section class="section section-alt" id="pricing">
+    <div class="wrap center">
+      <span class="eyebrow"><span data-lang-ar>نموذج مستدام</span><span data-lang-en>A sustainable model</span></span>
+      <h2 class="section-title"><span data-lang-ar>مجانية لمن ينقذ الأرواح</span><span data-lang-en>Free for those who
+          save lives</span></h2>
+      <p class="section-lead"><span data-lang-ar>المتبرعون والمستشفيات لا يدفعون أبداً. تأتي إيراداتنا من حول المنصة —
+          لا من التبرّع ذاته — عبر مصدرين.</span><span data-lang-en>Donors and hospitals never pay. Our revenue comes
+          from around the platform — never from the donation itself — through two streams.</span></p>
+    </div>
+
+    <!-- free-for-all banner -->
+    <div class="wrap free-banner card">
+      <div class="fb-ic">🩸</div>
+      <div class="fb-main">
+        <strong><span data-lang-ar>مجانية دائماً للمتبرعين وللمستشفيات</span><span data-lang-en>Always free for donors
+            and hospitals</span></strong>
+        <p class="muted"><span data-lang-ar>تسجيل، مطابقة تلقائية، تحليلات، وتوثيق الفصائل — دون أي رسوم على من ينقذون
+            الأرواح.</span><span data-lang-en>Registration, auto-matching, analytics, and type verification — with no
+            fees for the people saving lives.</span></p>
+      </div>
+      <span class="badge badge-fulfilled"><span data-lang-ar>0 رسوم</span><span data-lang-en>0 fees</span></span>
+    </div>
+
+    <!-- two revenue streams -->
+    <div class="wrap rev-grid">
+      <div class="card rev">
+        <div class="rev-n">1</div>
+        <div class="rev-ic">🤝</div>
+        <h3><span data-lang-ar>برنامج المكافآت مع شركاء تجاريين</span><span data-lang-en>Rewards program with commercial
+            partners</span></h3>
+        <p class="rev-lead"><span data-lang-ar>مطاعم وصيدليات تقدّم خصومات للمتبرعين كتقدير مجتمعي. تكسب هذه الشركات
+            عملاء جدداً بتكلفة تسويق مرتبطة بالنتيجة وصورة مجتمعية إيجابية.</span><span data-lang-en>Restaurants and
+            pharmacies offer donors discounts as a community thank-you. These businesses gain new customers at a
+            results-based marketing cost and a positive community image.</span></p>
+        <div class="rev-earn">
+          <span class="rev-earn-lbl"><span data-lang-ar>كيف نربح</span><span data-lang-en>How we earn</span></span>
+          <span data-lang-ar>رسم اشتراك بسيط من الشركاء، أو عمولة رمزية على كل كوبون يُستخدم فعلياً.</span><span
+            data-lang-en>A small partner subscription, or a symbolic commission on each coupon actually redeemed.</span>
+        </div>
+      </div>
+
+      <div class="card rev">
+        <div class="rev-n">2</div>
+        <div class="rev-ic">📣</div>
+        <h3><span data-lang-ar>رعاة وإعلانات مسؤولة</span><span data-lang-en>Responsible sponsors & ads</span></h3>
+        <p class="rev-lead"><span data-lang-ar>شركات الأدوية، والتأمين الصحي، ومختبرات التحاليل ترعى المنصة أو تعلن فيها
+            بشكل يناسب السياق الطبي ويحترم تجربة المتبرع.</span><span data-lang-en>Pharmaceutical companies, health
+            insurers, and medical labs sponsor or advertise on the platform in a way that fits the medical context and
+            respects the donor experience.</span></p>
+        <div class="rev-earn">
+          <span class="rev-earn-lbl"><span data-lang-ar>كيف نربح</span><span data-lang-en>How we earn</span></span>
+          <span data-lang-ar>رعاية أو مساحات إعلانية مدروسة ومناسبة للسياق الصحي.</span><span data-lang-en>Sponsorships
+            or curated ad placements appropriate to a health context.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap center" style="margin-block-start:28px">
+      <a href="#" class="btn btn-primary btn-lg"><span data-lang-ar>كن شريكاً أو راعياً</span><span data-lang-en>Become
+          a partner or sponsor</span></a>
+    </div>
+  </section>
+
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="wrap faq-wrap">
+      <div class="center">
+        <span class="eyebrow"><span data-lang-ar>أسئلة شائعة</span><span data-lang-en>FAQ</span></span>
+        <h2 class="section-title"><span data-lang-ar>أسئلة قد تدور في ذهنك</span><span data-lang-en>Questions you might
+            have</span></h2>
+      </div>
+      <div class="faq" id="faq"></div>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="wrap cta-inner">
+      <h2><span data-lang-ar>جاهز تكون النجدة؟</span><span data-lang-en>Ready to be the rescue?</span></h2>
+      <p><span data-lang-ar>سجّل اليوم وكن مستعداً حين يحتاجك أحدهم.</span><span data-lang-en>Sign up today and be ready
+          when someone needs you.</span></p>
+      <div class="cta-actions">
+        <a href="register.html" class="btn btn-donate btn-lg"><span data-lang-ar>سجّل كمتبرع</span><span
+            data-lang-en>Register as a donor</span></a>
+      </div>
+    </div>
+  </section>
+
+  <div data-footer></div>
+
+  <script src="app.js"></script>
+  <script>
+    function pageRender() {
+      // donor flow steps
+      const steps = [
+        ["🩸", "أدخل فصيلتك", "Enter your type", "أنشئ حساباً وأدخل فصيلة دمك ومدينتك ومنطقتك.", "Create an account with your type, city and area."],
+        ["📍", "حدّد موقعك", "Set your location", "موقعك يساعد النظام في إيجاد الحالات الأقرب إليك.", "Your location helps surface the nearest cases."],
+        ["🔔", "استقبل الطلبات", "Receive requests", "يصلك إشعار عند وجود حالة عاجلة تناسب فصيلتك.", "Get notified when an urgent matching case appears."],
+        ["✅", "تبرّع ووثّق", "Donate & verify", "تبرّع في المستشفى فتُوثّق فصيلتك ويُسجّل تبرّعك.", "Donate at the hospital; your type is verified and logged."],
+      ];
+      document.getElementById("donorFlow").innerHTML = steps.map((s, i) => `
+        <div class="flow-step">
+          <div class="flow-ic">${s[0]}</div>
+          <div class="flow-n">${i + 1}</div>
+          <h3><span data-lang-ar>${s[1]}</span><span data-lang-en>${s[2]}</span></h3>
+          <p><span data-lang-ar>${s[3]}</span><span data-lang-en>${s[4]}</span></p>
+        </div>`).join("");
+
+      // verification tokens
+      document.querySelectorAll(".vstep-token").forEach(el => {
+        el.outerHTML = el.textContent.trim() === "$$VERIFIED$$"
+          ? droplet("O+", true) : droplet("O+", false);
+      });
+
+      // compatibility (simplified donor -> can receive from)
+      const compat = [
+        ["O-", "O-"],
+        ["O+", "O+, O-"],
+        ["A+", "A±, O±"],
+        ["B+", "B±, O±"],
+        ["AB+", "الكل / All"],
+      ];
+      document.getElementById("compatTable").innerHTML = compat.map(([bt, from]) => `
+        <div class="compat-row">
+          <span class="bt-chip">${bt}</span>
+          <span class="compat-arrow">←</span>
+          <span class="compat-from">${from}</span>
+        </div>`).join("");
+
+      // FAQ
+      const faqs = [
+        ["هل التبرّع عبر نجدة مجاني؟", "Is donating through Najda free?", "نعم، المنصة مجانية تماماً للمتبرعين بشكل دائم. لا نبيع الدم ولا نأخذ عمولة على التبرّع.", "Yes. The platform is permanently free for donors. We never sell blood or take a commission on donation."],
+        ["ماذا لو لم أكن متأكداً من فصيلتي؟", "What if I'm unsure of my blood type?", "أدخل ما تعتقد أنه فصيلتك؛ ستبقى غير موثّقة وتُستخدم للفلترة فقط، ويؤكّدها المستشفى مخبرياً عند أول تبرّع.", "Enter what you believe it is; it stays unverified and is used only for filtering. The hospital confirms it in the lab at your first donation."],
+        ["كم مرة أستطيع التبرّع؟", "How often can I donate?", "يذكّرك النظام بموعد أهليتك القادم، وهو عادةً بعد ٥٦ يوماً من آخر تبرّع.", "We remind you of your next eligibility date, usually 56 days after your last donation."],
+        ["كيف تربح المنصة إن كانت مجانية؟", "How does the platform earn if it's free?", "من مصدرين حول المنصة: برنامج مكافآت مع شركاء تجاريين (رسم اشتراك بسيط أو عمولة رمزية على كل كوبون يُستخدم)، ورعاة وإعلانات مسؤولة — لا من التبرّع نفسه.", "From two streams around the platform: a rewards program with commercial partners (a small subscription or a symbolic per-coupon commission), and responsible sponsors and ads — never from the donation itself."],
+      ];
+      document.getElementById("faq").innerHTML = faqs.map(f => `
+        <details class="faq-item">
+          <summary><span data-lang-ar>${f[0]}</span><span data-lang-en>${f[1]}</span></summary>
+          <p><span data-lang-ar>${f[2]}</span><span data-lang-en>${f[3]}</span></p>
+        </details>`).join("");
+    }
+  </script>
+</body>
+
+</html>

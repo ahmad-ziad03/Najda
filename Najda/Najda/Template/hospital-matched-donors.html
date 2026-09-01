@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المتبرعون المطابقون | Matched donors — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <div data-side="hospital" data-active="matched"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="المتبرعون المطابقون" data-title-en="Matched donors"></div>
+      <div class="content">
+
+        <a href="hospital-requests.html" class="back-link">← <span data-lang-ar>عودة للطلبات</span><span
+            data-lang-en>Back to requests</span></a>
+
+        <!-- request context -->
+        <div class="card req-context">
+          <div id="ctxToken"></div>
+          <div class="rc-main">
+            <div class="rc-top">
+              <strong style="direction:ltr">R-1042</strong>
+              <span class="badge badge-urgent"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13">
+                  <path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z" />
+                </svg><span data-lang-ar>عاجل</span><span data-lang-en>Urgent</span></span>
+            </div>
+            <p class="muted"><span data-lang-ar>مطلوب <strong>3</strong> وحدات · فصيلة <strong>O−</strong> · قسم العناية
+                المركّزة</span><span data-lang-en>Needs <strong>3</strong> units · type <strong>O−</strong> · Intensive
+                care</span></p>
+          </div>
+          <div class="rc-progress">
+            <div class="rc-num"><span style="direction:ltr">2</span> / 3</div>
+            <div class="rc-lbl"><span data-lang-ar>وحدات مؤكّدة</span><span data-lang-en>units confirmed</span></div>
+          </div>
+        </div>
+
+        <div class="info-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 8v4M12 16h.01" stroke-linecap="round" />
+          </svg>
+          <span data-lang-ar>عند تبرّع متبرع غير موثّق، افحص فصيلته مخبرياً ثم أكّدها أو صحّحها هنا — هكذا تصبح فصيلته
+            موثّقة للطلبات القادمة.</span>
+          <span data-lang-en>When an unverified donor donates, lab-test their type and confirm or correct it here — this
+            makes their type verified for future requests.</span>
+        </div>
+
+        <h3 class="block-title" style="margin-block:26px 14px"><span data-lang-ar>المتبرعون الذين استجابوا</span><span
+            data-lang-en>Donors who responded</span></h3>
+        <div id="donorList" class="stack" style="--stack:14px"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // matched donors for this O- request; some verified, one not
+    const matched = [
+      { id: 1, name: { ar: "رنا عبدالله", en: "Rana Abdullah" }, bt: "O-", verified: true, dist: "1.2", state: "donated" },
+      { id: 2, name: { ar: "سامر الخطيب", en: "Samer Al-Khatib" }, bt: "O-", verified: true, dist: "3.8", state: "on_way" },
+      { id: 3, name: { ar: "خالد الرشيد", en: "Khaled Al-Rashid" }, bt: "O-", verified: false, dist: "5.1", state: "donated" },
+    ];
+
+    function pageRender() {
+      document.getElementById("ctxToken").innerHTML = droplet("O-", true, "lg");
+      renderDonors();
+    }
+
+    function stateBadge(s) {
+      const m = {
+        responded: { ar: "استجاب", en: "Responded", c: "badge-open" },
+        on_way: { ar: "في الطريق", en: "On the way", c: "badge-matched" },
+        donated: { ar: "تبرّع", en: "Donated", c: "badge-fulfilled" }
+      };
+      const x = m[s]; return `<span class="badge ${x.c}"><span data-lang-ar>${x.ar}</span><span data-lang-en>${x.en}</span></span>`;
+    }
+
+    function renderDonors() {
+      document.getElementById("donorList").innerHTML = matched.map(d => `
+        <div class="donor-row card" id="donor-${d.id}">
+          ${droplet(d.bt, d.verified, "sm")}
+          <div class="dr-main">
+            <div class="dr-top">
+              <strong><span data-lang-ar>${d.name.ar}</span><span data-lang-en>${d.name.en}</span></strong>
+              ${d.verified ? `<span class="badge badge-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="12" height="12" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span data-lang-ar>فصيلة موثّقة</span><span data-lang-en>Verified</span></span>`
+          : `<span class="badge badge-unverified"><span data-lang-ar>فصيلة غير موثّقة</span><span data-lang-en>Unverified</span></span>`}
+              ${stateBadge(d.state)}
+            </div>
+            <div class="rr-meta">
+              <span class="meta">${IC.pin}<span>${d.dist} <span data-lang-ar>كم</span><span data-lang-en>km</span></span></span>
+              <span class="meta">${IC.drop}<span data-lang-ar>الفصيلة المُدخلة: ${d.bt}</span><span data-lang-en>Entered type: ${d.bt}</span></span>
+            </div>
+          </div>
+          <div class="dr-actions">
+            ${!d.verified && d.state === "donated"
+          ? `<button class="btn btn-primary btn-sm" onclick="openVerify(${d.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" width="15" height="15" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span data-lang-ar>توثيق الفصيلة</span><span data-lang-en>Verify type</span></button>`
+          : `<button class="btn btn-ghost btn-sm"><span data-lang-ar>عرض الملف</span><span data-lang-en>View profile</span></button>`}
+          </div>
+        </div>`).join("");
+      applyLang(currentLang());
+    }
+
+    function openVerify(id) {
+      const row = document.getElementById("donor-" + id);
+      if (row.querySelector(".verify-panel")) return;
+      const panel = document.createElement("div");
+      panel.className = "verify-panel";
+      panel.innerHTML = `
+        <div class="vp-inner">
+          <div class="vp-title"><span data-lang-ar>نتيجة الفحص المخبري</span><span data-lang-en>Lab test result</span></div>
+          <p class="muted" style="font-size:.86rem"><span data-lang-ar>اختر الفصيلة التي أكّدها المختبر. إن اختلفت عن المُدخلة، ستُصحّح تلقائياً.</span><span data-lang-en>Select the type confirmed by the lab. If it differs from the entered one, it's corrected automatically.</span></p>
+          <div class="vp-row">
+            <select class="select" id="vp-sel-${id}" style="max-width:140px"></select>
+            <button class="btn btn-primary btn-sm" onclick="confirmVerify(${id})"><span data-lang-ar>تأكيد التوثيق</span><span data-lang-en>Confirm</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="this.closest('.verify-panel').remove()"><span data-lang-ar>إلغاء</span><span data-lang-en>Cancel</span></button>
+          </div>
+        </div>`;
+      row.appendChild(panel);
+      const sel = panel.querySelector("#vp-sel-" + id);
+      sel.innerHTML = DATA.bloodTypes.map(b => `<option ${b === "O-" ? "selected" : ""}>${b}</option>`).join("");
+      applyLang(currentLang());
+    }
+
+    function confirmVerify(id) {
+      const d = matched.find(x => x.id === id);
+      const sel = document.getElementById("vp-sel-" + id);
+      d.bt = sel.value; d.verified = true;
+      renderDonors();
+      showToast({ ar: "تم توثيق فصيلة المتبرع", en: "Donor blood type verified" }, "success");
+    }
+  </script>
+</body>
+
+</html>

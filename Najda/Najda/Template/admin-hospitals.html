@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المستشفيات | Hospitals — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <div data-side="admin" data-active="hospitals"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="المستشفيات" data-title-en="Hospitals"></div>
+      <div class="content">
+
+        <div class="page-head">
+          <h2 class="page-head-title"><span data-lang-ar>إدارة المستشفيات</span><span data-lang-en>Manage
+              hospitals</span></h2>
+          <p class="muted"><span data-lang-ar>اعتمد المستشفيات الجديدة وتابع نشاط الشركاء.</span><span
+              data-lang-en>Approve new hospitals and monitor partner activity.</span></p>
+        </div>
+
+        <!-- pending approvals -->
+        <div id="pendingWrap"></div>
+
+        <h3 class="block-title" style="margin-block:26px 14px"><span data-lang-ar>المستشفيات المعتمدة</span><span
+            data-lang-en>Approved hospitals</span></h3>
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr>
+                <th><span data-lang-ar>المستشفى</span><span data-lang-en>Hospital</span></th>
+                <th><span data-lang-ar>المدينة</span><span data-lang-en>City</span></th>
+                <th><span data-lang-ar>الطلبات</span><span data-lang-en>Requests</span></th>
+                <th><span data-lang-ar>الحالة</span><span data-lang-en>Status</span></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="body"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function pageRender() { renderPending(); renderApproved(); }
+
+    function renderPending() {
+      const pending = DATA.hospitals.filter(h => h.status === "pending");
+      const wrap = document.getElementById("pendingWrap");
+      if (!pending.length) { wrap.innerHTML = ""; return; }
+      wrap.innerHTML = pending.map(h => `
+        <div class="card pending-card" id="pending-${h.id}">
+          <div class="pc-ic">🏥</div>
+          <div class="pc-main">
+            <div class="pc-top">
+              <strong><span data-lang-ar>${h.name.ar}</span><span data-lang-en>${h.name.en}</span></strong>
+              <span class="badge badge-pending"><span data-lang-ar>بانتظار الاعتماد</span><span data-lang-en>Pending approval</span></span>
+            </div>
+            <div class="rr-meta">
+              <span class="meta">${IC.pin}<span data-lang-ar>${h.city.ar}</span><span data-lang-en>${h.city.en}</span></span>
+              <span class="meta">${IC.building}<span data-lang-ar>رقم الترخيص: MOH-40219</span><span data-lang-en>License: MOH-40219</span></span>
+            </div>
+          </div>
+          <div class="pc-actions">
+            <button class="btn btn-primary btn-sm" onclick="approve(${h.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" width="15" height="15" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span data-lang-ar>اعتماد</span><span data-lang-en>Approve</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('pending-${h.id}').remove(); showToast({ar:'تم رفض طلب المستشفى',en:'Hospital request rejected'},'error')"><span data-lang-ar>رفض</span><span data-lang-en>Reject</span></button>
+          </div>
+        </div>`).join("");
+      applyLang(currentLang());
+    }
+
+    function renderApproved() {
+      const approved = DATA.hospitals.filter(h => h.status === "approved");
+      document.getElementById("body").innerHTML = approved.map(h => `
+        <tr>
+          <td><div class="who"><span class="avatar" style="inline-size:36px;block-size:36px;font-size:.9rem">🏥</span><span class="nm"><span data-lang-ar>${h.name.ar}</span><span data-lang-en>${h.name.en}</span></span></div></td>
+          <td><span data-lang-ar>${h.city.ar}</span><span data-lang-en>${h.city.en}</span></td>
+          <td style="direction:ltr">${h.requests}</td>
+          <td>${statusBadge("approved")}</td>
+          <td><a href="admin-hospital-manage.html" class="btn btn-ghost btn-sm"><span data-lang-ar>إدارة</span><span data-lang-en>Manage</span></a></td>
+        </tr>`).join("");
+      applyLang(currentLang());
+    }
+
+    function approve(id) {
+      const h = DATA.hospitals.find(x => x.id === id);
+      h.status = "approved"; h.requests = 0;
+      renderPending(); renderApproved();
+      showToast({ ar: "تم اعتماد المستشفى", en: "Hospital approved" }, "success");
+    }
+  </script>
+</body>
+
+</html>

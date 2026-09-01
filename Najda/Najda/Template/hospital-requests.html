@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إدارة الطلبات | Manage requests — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <div data-side="hospital" data-active="requests"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="إدارة الطلبات" data-title-en="Manage requests"></div>
+      <div class="content">
+
+        <div class="welcome">
+          <div>
+            <h2 class="page-head-title"><span data-lang-ar>إدارة طلبات الدم</span><span data-lang-en>Manage blood
+                requests</span></h2>
+            <p class="muted"><span data-lang-ar>تابع حالة كل طلب من النشر حتى الاكتمال.</span><span data-lang-en>Track
+                each request from posting to completion.</span></p>
+          </div>
+          <a href="hospital-post-request.html" class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.2" width="18" height="18" stroke-linecap="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg><span data-lang-ar>طلب جديد</span><span data-lang-en>New request</span></a>
+        </div>
+
+        <!-- status tabs -->
+        <div class="tabs" id="tabs">
+          <button class="tab active" data-f="all" onclick="setTab(this)"><span data-lang-ar>الكل</span><span
+              data-lang-en>All</span> <em id="c-all"></em></button>
+          <button class="tab" data-f="urgent" onclick="setTab(this)"><span data-lang-ar>عاجل</span><span
+              data-lang-en>Urgent</span> <em id="c-urgent"></em></button>
+          <button class="tab" data-f="open" onclick="setTab(this)"><span data-lang-ar>مفتوح</span><span
+              data-lang-en>Open</span> <em id="c-open"></em></button>
+          <button class="tab" data-f="matched" onclick="setTab(this)"><span data-lang-ar>تمت المطابقة</span><span
+              data-lang-en>Matched</span> <em id="c-matched"></em></button>
+          <button class="tab" data-f="fulfilled" onclick="setTab(this)"><span data-lang-ar>مكتمل</span><span
+              data-lang-en>Fulfilled</span> <em id="c-fulfilled"></em></button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr>
+                <th><span data-lang-ar>الطلب</span><span data-lang-en>Request</span></th>
+                <th><span data-lang-ar>الفصيلة</span><span data-lang-en>Type</span></th>
+                <th><span data-lang-ar>الوحدات</span><span data-lang-en>Units</span></th>
+                <th><span data-lang-ar>مطابَق</span><span data-lang-en>Matched</span></th>
+                <th><span data-lang-ar>الحالة</span><span data-lang-en>Status</span></th>
+                <th><span data-lang-ar>التاريخ</span><span data-lang-en>Date</span></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="body"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    let filter = "all";
+    function pageRender() {
+      ["all", "urgent", "open", "matched", "fulfilled"].forEach(f => {
+        const n = f === "all" ? DATA.requests.length : DATA.requests.filter(r => r.status === f).length;
+        document.getElementById("c-" + f).textContent = n;
+      });
+      render();
+    }
+    function setTab(btn) {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      btn.classList.add("active"); filter = btn.getAttribute("data-f"); render();
+    }
+    function render() {
+      let list = filter === "all" ? DATA.requests : DATA.requests.filter(r => r.status === filter);
+      document.getElementById("body").innerHTML = list.map(r => `
+        <tr>
+          <td><strong style="font-family:var(--font-display);direction:ltr">${r.id}</strong><div class="sub" style="font-size:.8rem;color:var(--faint)"><span data-lang-ar>${r.note.ar}</span><span data-lang-en>${r.note.en}</span></div></td>
+          <td><span class="bt-chip">${r.bt}</span></td>
+          <td style="direction:ltr">${r.units}</td>
+          <td><span class="meta">${IC.users}<span style="direction:ltr">${r.matched}</span></span></td>
+          <td>${statusBadge(r.status)}</td>
+          <td style="direction:ltr;white-space:nowrap">${fmtDate(r.posted)}</td>
+          <td>
+            <div class="row-actions">
+              <a href="hospital-matched-donors.html" class="btn btn-soft btn-sm"><span data-lang-ar>المتبرعون</span><span data-lang-en>Donors</span></a>
+              ${r.status !== "fulfilled" ? `<button class="btn btn-ghost btn-sm" onclick="markDone(this)"><span data-lang-ar>إنهاء</span><span data-lang-en>Fulfill</span></button>` : ""}
+            </div>
+          </td>
+        </tr>`).join("")
+        || `<tr><td colspan="7"><div class="empty">${IC.list}<p><span data-lang-ar>لا توجد طلبات في هذه الحالة.</span><span data-lang-en>No requests in this state.</span></p></div></td></tr>`;
+      applyLang(currentLang());
+    }
+    function markDone(btn) {
+      const row = btn.closest("tr");
+      row.querySelector("td:nth-child(5)").innerHTML = statusBadge("fulfilled");
+      btn.remove(); applyLang(currentLang());
+      showToast({ ar: "تم إنهاء الطلب بنجاح", en: "Request marked as fulfilled" }, "success");
+    }
+  </script>
+</body>
+
+</html>

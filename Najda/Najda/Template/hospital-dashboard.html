@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة المستشفى | Hospital dashboard — نجدة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div data-side="hospital" data-active="dash"></div>
+    <div class="main">
+      <div data-topbar data-title-ar="لوحة المستشفى" data-title-en="Hospital dashboard"></div>
+      <div class="content">
+
+        <div class="welcome">
+          <div>
+            <h2 class="page-head-title"><span data-lang-ar>مستشفى البشير 🏥</span><span data-lang-en>Al-Bashir Hospital 🏥</span></h2>
+            <p class="muted"><span data-lang-ar>نظرة سريعة على طلباتك ومخزون المتبرعين المتاح.</span><span data-lang-en>A quick look at your requests and available donor supply.</span></p>
+          </div>
+          <a href="hospital-post-request.html" class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="18" height="18" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-lang-ar>طلب دم جديد</span><span data-lang-en>New request</span></a>
+        </div>
+
+        <div class="grid status-grid">
+          <div class="card status-card"><div class="sc-ic crimson">🔴</div><div><div class="sc-lbl"><span data-lang-ar>طلبات عاجلة</span><span data-lang-en>Urgent requests</span></div><div class="sc-val">2</div></div></div>
+          <div class="card status-card"><div class="sc-ic pine">📋</div><div><div class="sc-lbl"><span data-lang-ar>طلبات نشطة</span><span data-lang-en>Active requests</span></div><div class="sc-val">5</div></div></div>
+          <div class="card status-card"><div class="sc-ic warn">🤝</div><div><div class="sc-lbl"><span data-lang-ar>متبرعون مطابقون</span><span data-lang-en>Matched donors</span></div><div class="sc-val">18</div></div></div>
+          <div class="card status-card"><div class="sc-ic ok">✅</div><div><div class="sc-lbl"><span data-lang-ar>مكتملة هذا الشهر</span><span data-lang-en>Fulfilled this month</span></div><div class="sc-val">27</div></div></div>
+        </div>
+
+        <div class="dash-2col">
+          <!-- recent requests -->
+          <section class="card">
+            <div class="toolbar">
+              <h3 class="block-title"><span data-lang-ar>أحدث الطلبات</span><span data-lang-en>Recent requests</span></h3>
+              <a href="hospital-requests.html" class="link-more"><span data-lang-ar>إدارة الكل</span><span data-lang-en>Manage all</span> ←</a>
+            </div>
+            <div class="table-wrap" style="border:0">
+              <table class="data">
+                <thead><tr>
+                  <th><span data-lang-ar>الطلب</span><span data-lang-en>Request</span></th>
+                  <th><span data-lang-ar>الفصيلة</span><span data-lang-en>Type</span></th>
+                  <th><span data-lang-ar>الحالة</span><span data-lang-en>Status</span></th>
+                  <th><span data-lang-ar>مطابَق</span><span data-lang-en>Matched</span></th>
+                </tr></thead>
+                <tbody id="reqBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- inventory -->
+          <aside class="card">
+            <h3 class="block-title" style="margin-block-end:6px"><span data-lang-ar>توفّر المتبرعين</span><span data-lang-en>Donor availability</span></h3>
+            <p class="muted" style="font-size:.86rem;margin-block-end:16px"><span data-lang-ar>متبرعون متاحون قربك حسب الفصيلة</span><span data-lang-en>Available donors near you by type</span></p>
+            <div id="invBars" class="md-bars"></div>
+          </aside>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function pageRender(){
+      const mine = DATA.requests.slice(0,5);
+      document.getElementById("reqBody").innerHTML = mine.map(r=>`
+        <tr>
+          <td><div><strong style="font-family:var(--font-display);direction:ltr">${r.id}</strong><div class="sub" style="font-size:.8rem;color:var(--faint)"><span data-lang-ar>${r.city.ar}</span><span data-lang-en>${r.city.en}</span></div></div></td>
+          <td><span class="bt-chip">${r.bt}</span></td>
+          <td>${statusBadge(r.status)}</td>
+          <td style="direction:ltr">${r.matched}</td>
+        </tr>`).join("");
+
+      const inv=[["O+",42],["O-",9],["A+",31],["A-",7],["B+",22],["AB+",5]];
+      document.getElementById("invBars").innerHTML = inv.map(([bt,n])=>{
+        const pct=Math.min(100, n*2.2);
+        const low = n < 10;
+        return `<div class="md-row">
+          <span class="bt-chip">${bt}</span>
+          <div class="progress" style="flex:1"><i style="width:${pct}%;${low?'background:var(--crimson)':''}"></i></div>
+          <span class="md-pct">${n}${low?' ⚠':''}</span>
+        </div>`;
+      }).join("");
+    }
+  </script>
+</body>
+</html>
