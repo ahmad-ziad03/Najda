@@ -244,10 +244,6 @@ namespace Najda.Data.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<string>("DepartmentEn")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
                     b.Property<int>("HospitalId")
                         .HasColumnType("int");
 
@@ -275,69 +271,6 @@ namespace Najda.Data.Migrations
                     b.HasIndex("HospitalId");
 
                     b.ToTable("Requests");
-                });
-
-            modelBuilder.Entity("Najda.Models.Coupon", b =>
-                {
-                    b.Property<int>("CouponId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CouponId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DiscountText")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("PartnerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.HasKey("CouponId");
-
-                    b.HasIndex("PartnerId");
-
-                    b.ToTable("Coupons");
-                });
-
-            modelBuilder.Entity("Najda.Models.CouponRedemption", b =>
-                {
-                    b.Property<int>("RedemptionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RedemptionId"));
-
-                    b.Property<decimal>("CommissionAmount")
-                        .HasPrecision(6, 2)
-                        .HasColumnType("decimal(6,2)");
-
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DonorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("RedeemedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("RedemptionId");
-
-                    b.HasIndex("CouponId");
-
-                    b.HasIndex("DonorId");
-
-                    b.ToTable("CouponRedemptions");
                 });
 
             modelBuilder.Entity("Najda.Models.Donation", b =>
@@ -414,6 +347,9 @@ namespace Najda.Data.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
@@ -467,10 +403,6 @@ namespace Najda.Data.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
-                    b.Property<string>("CityEn")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
                     b.Property<DateTime?>("ContactAppointedDate")
                         .HasColumnType("datetime2");
 
@@ -503,10 +435,6 @@ namespace Najda.Data.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<string>("NameEn")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
                     b.Property<string>("Phone")
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
@@ -526,46 +454,6 @@ namespace Najda.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Hospitals");
-                });
-
-            modelBuilder.Entity("Najda.Models.Partner", b =>
-                {
-                    b.Property<int>("PartnerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PartnerId"));
-
-                    b.Property<string>("BillingModel")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("City")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("PartnerType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.HasKey("PartnerId");
-
-                    b.ToTable("Partners");
                 });
 
             modelBuilder.Entity("Najda.Models.RequestMatch", b =>
@@ -602,42 +490,6 @@ namespace Najda.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("RequestMatches");
-                });
-
-            modelBuilder.Entity("Najda.Models.Sponsor", b =>
-                {
-                    b.Property<int>("SponsorId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SponsorId"));
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("PlacementType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.HasKey("SponsorId");
-
-                    b.ToTable("Sponsors");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -702,36 +554,6 @@ namespace Najda.Data.Migrations
                     b.Navigation("Hospital");
                 });
 
-            modelBuilder.Entity("Najda.Models.Coupon", b =>
-                {
-                    b.HasOne("Najda.Models.Partner", "Partner")
-                        .WithMany("Coupons")
-                        .HasForeignKey("PartnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Partner");
-                });
-
-            modelBuilder.Entity("Najda.Models.CouponRedemption", b =>
-                {
-                    b.HasOne("Najda.Models.Coupon", "Coupon")
-                        .WithMany("Redemptions")
-                        .HasForeignKey("CouponId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Najda.Models.Donor", "Donor")
-                        .WithMany()
-                        .HasForeignKey("DonorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coupon");
-
-                    b.Navigation("Donor");
-                });
-
             modelBuilder.Entity("Najda.Models.Donation", b =>
                 {
                     b.HasOne("Najda.Models.Donor", "Donor")
@@ -794,11 +616,6 @@ namespace Najda.Data.Migrations
                     b.Navigation("Matches");
                 });
 
-            modelBuilder.Entity("Najda.Models.Coupon", b =>
-                {
-                    b.Navigation("Redemptions");
-                });
-
             modelBuilder.Entity("Najda.Models.Donor", b =>
                 {
                     b.Navigation("Donations");
@@ -809,11 +626,6 @@ namespace Najda.Data.Migrations
             modelBuilder.Entity("Najda.Models.Hospital", b =>
                 {
                     b.Navigation("Requests");
-                });
-
-            modelBuilder.Entity("Najda.Models.Partner", b =>
-                {
-                    b.Navigation("Coupons");
                 });
 #pragma warning restore 612, 618
         }

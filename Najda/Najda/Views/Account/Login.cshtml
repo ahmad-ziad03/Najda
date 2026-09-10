@@ -1,4 +1,4 @@
-﻿@model LoginViewModel
+@model LoginViewModel
 @{
     ViewData["Title"] = "تسجيل الدخول";
     Layout = "_LayoutAuth";
@@ -6,71 +6,68 @@
 
 <div class="auth">
     <div class="auth-box">
-        <aside class="auth-aside">
-            <a asp-controller="Home" asp-action="Index" class="brand">
-                @Html.Icon("logo")<span><span data-lang-ar>نجدة</span><span data-lang-en>Najda</span></span>
-            </a>
-            <div class="aside-body">
-                <span class="auth-eyebrow"><span data-lang-ar>مرحباً بعودتك</span><span data-lang-en>Welcome back</span></span>
-                <h2><span data-lang-ar>أهلاً بعودتك!</span><span data-lang-en>Hello again!</span></h2>
-                <p><span data-lang-ar>سجّل دخولك لمتابعة الطلبات العاجلة القريبة منك وإدارة تبرعاتك.</span><span data-lang-en>Log in to follow urgent cases near you and manage your donations.</span></p>
-                <ul class="auth-features">
-                    <li><span class="fx">🔔</span><span data-lang-ar>تابع الطلبات العاجلة</span><span data-lang-en>Track urgent requests</span></li>
-                    <li><span class="fx">🩸</span><span data-lang-ar>أدر تبرعاتك بسهولة</span><span data-lang-en>Manage your donations</span></li>
-                    <li><span class="fx">📍</span><span data-lang-ar>مطابقة مع الأقرب إليك</span><span data-lang-en>Get matched nearby</span></li>
-                </ul>
-            </div>
-            <svg class="deco" viewBox="0 0 24 24" fill="#fff"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z" /></svg>
-        </aside>
+    <aside class="auth-aside">
+        <a asp-controller="Home" asp-action="Index" class="brand">
+            @Html.Icon("logo")<span>نجدة</span>
+        </a>
+        <div class="aside-body">
+            <span class="auth-eyebrow">مرحباً بعودتك</span>
+            <h2>أهلاً بعودتك!</h2>
+            <p>سجّل دخولك لمتابعة الطلبات العاجلة القريبة منك وإدارة تبرعاتك.</p>
+            <ul class="auth-features">
+                <li><span class="fx">🔔</span>تابع الطلبات العاجلة</li>
+                <li><span class="fx">🩸</span>أدر تبرعاتك بسهولة</li>
+                <li><span class="fx">📍</span>مطابقة مع الأقرب إليك</li>
+            </ul>
+        </div>
+        <svg class="deco" viewBox="0 0 24 24" fill="#fff"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z"/></svg>
+    </aside>
 
-        <main class="auth-main">
-            <div class="auth-card">
-                <div class="top">
-                    <a asp-controller="Home" asp-action="Index" class="brand" style="color:var(--pine)">
-                        @Html.Icon("logo")<span><span data-lang-ar>نجدة</span><span data-lang-en>Najda</span></span>
-                    </a>
-                    <button class="lang-toggle" type="button" onclick="toggleLang()">
-                        @Html.Icon("globe")<span data-lang-label>EN</span>
-                    </button>
+    <main class="auth-main">
+        <div class="auth-card">
+            <div class="top">
+                <a asp-controller="Home" asp-action="Index" class="brand" style="color:var(--pine)">
+                    @Html.Icon("logo")<span>نجدة</span>
+                </a>
+                            </div>
+
+            <h1>تسجيل الدخول</h1>
+            <p class="sub">أدخل بياناتك للمتابعة إلى حسابك.</p>
+
+            <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="mt-4">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 px-3 small" role="alert" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none")"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                    <input asp-for="Email" class="form-control" placeholder="name@example.com" autocomplete="username" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
                 </div>
 
-                <h1><span data-lang-ar>تسجيل الدخول</span><span data-lang-en>Log in</span></h1>
-                <p class="sub"><span data-lang-ar>أدخل بياناتك للمتابعة إلى حسابك.</span><span data-lang-en>Enter your details to continue to your account.</span></p>
+                <div class="mb-2">
+                    <label asp-for="Password" class="form-label">كلمة المرور</label>
+                    <input asp-for="Password" class="form-control" placeholder="••••••••" autocomplete="current-password" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
 
-                <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="mt-4">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 px-3 small" role="alert" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none")"></div>
-
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label"><span data-lang-ar>البريد الإلكتروني</span><span data-lang-en>Email</span></label>
-                        <input asp-for="Email" class="form-control" placeholder="name@example.com" autocomplete="username" />
-                        <span asp-validation-for="Email" class="text-danger small"></span>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label small">تذكّرني</label>
                     </div>
+                    <a asp-action="ForgotPassword" style="color:var(--teal-dark);font-size:.86rem;font-weight:600">
+                        نسيت كلمة المرور؟
+                    </a>
+                </div>
 
-                    <div class="mb-2">
-                        <label asp-for="Password" class="form-label"><span data-lang-ar>كلمة المرور</span><span data-lang-en>Password</span></label>
-                        <input asp-for="Password" class="form-control" placeholder="••••••••" autocomplete="current-password" />
-                        <span asp-validation-for="Password" class="text-danger small"></span>
-                    </div>
+                <button class="btn btn-primary btn-block btn-lg" type="submit">دخول</button>
+            </form>
 
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="form-check">
-                            <input asp-for="RememberMe" class="form-check-input" />
-                            <label asp-for="RememberMe" class="form-check-label small"><span data-lang-ar>تذكّرني</span><span data-lang-en>Remember me</span></label>
-                        </div>
-                        <a asp-action="ForgotPassword" style="color:var(--teal-dark);font-size:.86rem;font-weight:600">
-                            <span data-lang-ar>نسيت كلمة المرور؟</span><span data-lang-en>Forgot password?</span>
-                        </a>
-                    </div>
-
-                    <button class="btn btn-primary btn-block btn-lg" type="submit"><span data-lang-ar>دخول</span><span data-lang-en>Log in</span></button>
-                </form>
-
-                <p class="auth-alt">
-                    <span data-lang-ar>ليس لديك حساب؟</span><span data-lang-en>Don't have an account?</span>
-                    <a asp-action="Register"><span data-lang-ar>سجّل الآن</span><span data-lang-en>Sign up</span></a>
-                </p>
-            </div>
-        </main>
+            <p class="auth-alt">
+                ليس لديك حساب؟
+                <a asp-action="Register">سجّل الآن</a>
+            </p>
+        </div>
+    </main>
     </div>
 </div>
 

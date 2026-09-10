@@ -1,0 +1,85 @@
+@model List<Donation>
+@{
+    ViewData["Title"] = "سجل التبرعات";
+    Layout = "_LayoutDashboard";
+    var donor = ViewData["Donor"] as Donor;
+    var eligible = donor?.IsEligibleNow ?? true;
+}
+
+<div class="page-head">
+    <h2 class="page-head-title">سجل تبرعاتك</h2>
+    <p class="muted">كل تبرّع هنا موثّق من المستشفى.</p>
+</div>
+
+<!-- eligibility banner -->
+<div class="card elig" style="@(eligible ? "" : "background:linear-gradient(120deg,var(--warn-soft),var(--paper))")">
+    <div class="elig-ic">🩸</div>
+    <div class="elig-body">
+        <div class="row-between">
+            <strong>
+                @(eligible ? "أنت مؤهّل للتبرّع الآن" : "لست مؤهلاً للتبرّع بعد")
+            </strong>
+            @if (eligible)
+            {
+                <span class="badge badge-fulfilled">جاهز</span>
+            }
+            else
+            {
+                <span class="badge badge-matched">انتظار</span>
+            }
+        </div>
+        <div class="progress" style="margin-block:10px"><i style="width:@(eligible ? 100 : 60)%"></i></div>
+        <p class="muted" style="font-size:.88rem">
+            @if (eligible)
+            {
+                <text>يمكنك التبرّع متى احتاجك أحدهم. حافظ على استعدادك!</text>
+            }
+            else
+            {
+                <text>موعد أهليتك القادم: @(donor?.NextEligibleDate?.ToString("dd/MM/yyyy"))</text>
+            }
+        </p>
+    </div>
+</div>
+
+<div class="grid status-grid" style="margin-block:22px">
+    <div class="stat"><div class="num">@Model.Count</div><div class="lbl">إجمالي التبرعات</div></div>
+    <div class="stat"><div class="num crimson">@(Model.Count * 3)</div><div class="lbl">حياة يُحتمل إنقاذها</div></div>
+    <div class="stat"><div class="num gold" style="direction:ltr">@(donor?.BloodType)</div><div class="lbl">الفصيلة الموثّقة</div></div>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-wrap">
+        <table class="data">
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>المستشفى</th>
+                    <th>الفصيلة</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dn in Model)
+                {
+                    <tr>
+                        <td style="direction:ltr;white-space:nowrap">@dn.DonationDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @(dn.Hospital?.Name ?? "—")
+                        </td>
+                        <td>@Html.BtChip(dn.BloodType)</td>
+                        <td>@Html.StatusBadge("Verified")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty card">
+        @Html.Icon("history")
+        <p>لم تقم بأي تبرّع بعد. عندما تتبرّع، سيظهر سجلك هنا.</p>
+    </div>
+}

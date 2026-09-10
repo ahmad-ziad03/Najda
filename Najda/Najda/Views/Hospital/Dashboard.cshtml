@@ -1,0 +1,110 @@
+@model HospitalDashboardViewModel
+@{
+    ViewData["Title"] = "لوحة المستشفى";
+    Layout = "_LayoutDashboard";
+    var approved = Model.Hospital.Status == "Approved";
+}
+
+<div class="welcome">
+    <div>
+        <h2 class="page-head-title">@Model.Hospital.Name 🏥</h2>
+        <p class="muted">نظرة سريعة على طلباتك ومخزون المتبرعين المتاح.</p>
+    </div>
+    @if (approved)
+    {
+        <a asp-action="PostRequest" class="btn btn-primary">
+            @Html.Icon("plus")طلب دم جديد
+        </a>
+    }
+</div>
+
+@if (Model.Hospital.Status == "Pending")
+{
+    <div class="info-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>
+        حسابك قيد المراجعة من إدارة نجدة. ستتمكن من نشر الطلبات بعد الاعتماد.
+    </div>
+}
+else if (Model.Hospital.Status == "Suspended")
+{
+    <div class="info-note" style="background:var(--crimson-soft);border-color:#f0c9c3;color:var(--crimson-dark)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>
+        هذا الحساب معلّق حالياً. تواصل مع إدارة نجدة لإعادة التفعيل.
+    </div>
+}
+
+<div class="grid status-grid">
+    <div class="card status-card"><div class="sc-ic crimson">🔴</div><div><div class="sc-lbl">طلبات عاجلة</div><div class="sc-val">@Model.UrgentRequests</div></div></div>
+    <div class="card status-card"><div class="sc-ic pine">📋</div><div><div class="sc-lbl">طلبات مفتوحة</div><div class="sc-val">@Model.OpenRequests</div></div></div>
+    <div class="card status-card"><div class="sc-ic warn">🤝</div><div><div class="sc-lbl">تمت المطابقة</div><div class="sc-val">@Model.MatchedRequests</div></div></div>
+    <div class="card status-card"><div class="sc-ic ok">✅</div><div><div class="sc-lbl">مكتملة</div><div class="sc-val">@Model.FulfilledRequests</div></div></div>
+</div>
+
+<div class="dash-2col">
+    <!-- recent requests -->
+    <section class="card">
+        <div class="toolbar">
+            <h3 class="block-title">أحدث الطلبات</h3>
+            @if (approved)
+            {
+                <a asp-action="Requests" class="link-more">إدارة الكل ←</a>
+            }
+        </div>
+        @if (Model.RecentRequests.Any())
+        {
+            <div class="table-wrap" style="border:0">
+                <table class="data">
+                    <thead>
+                        <tr>
+                            <th>الفصيلة</th>
+                            <th>الوحدات</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.RecentRequests)
+                        {
+                            <tr>
+                                <td>@Html.BtChip(r.BloodType)</td>
+                                <td style="direction:ltr">@r.UnitsConfirmed / @r.UnitsNeeded</td>
+                                <td>@Html.RequestBadge(r.Priority, r.Status)</td>
+                                <td style="direction:ltr;white-space:nowrap">@r.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="muted">لم تنشر أي طلب بعد.</p>
+        }
+    </section>
+
+    <!-- donor availability -->
+    <aside class="card">
+        <h3 class="block-title" style="margin-block-end:6px">توفّر المتبرعين</h3>
+        <p class="muted" style="font-size:.86rem;margin-block-end:16px">
+            متبرعون متاحون في @Model.Hospital.City حسب الفصيلة
+        </p>
+        @if (Model.SupplyByType.Any())
+        {
+            var maxSupply = Model.SupplyByType.Max(s => s.Count);
+            <div class="md-bars">
+                @foreach (var s in Model.SupplyByType.OrderByDescending(x => x.Count))
+                {
+                    <div class="md-row">
+                        @Html.BtChip(s.BloodType)
+                        <div class="progress" style="flex:1"><i style="width:@((int)(s.Count / (double)maxSupply * 100))%"></i></div>
+                        <span class="md-pct">@s.Count</span>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="muted">لا يوجد متبرعون متاحون في مدينتك حالياً.</p>
+        }
+    </aside>
+</div>

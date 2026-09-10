@@ -1,0 +1,86 @@
+@model List<BloodRequest>
+@{
+    ViewData["Title"] = "إدارة الطلبات";
+    Layout = "_LayoutDashboard";
+    var status = ViewData["status"] as string ?? "";
+    var approved = (bool)(ViewData["ApprovedHospital"] ?? false);
+    var refMap = ViewData["RefMap"] as Dictionary<int, string> ?? new Dictionary<int, string>();
+    string Ref(int rid) => refMap.TryGetValue(rid, out var v) ? v : $"REQ-{rid}";
+    string TabClass(string s) => status == s || (s == "" && string.IsNullOrEmpty(status)) ? "tab active" : "tab";
+}
+
+<div class="welcome">
+    <div>
+        <h2 class="page-head-title">إدارة طلبات الدم</h2>
+        <p class="muted">تابع حالة كل طلب من النشر حتى الاكتمال.</p>
+    </div>
+    @if (approved)
+    {
+        <a asp-action="PostRequest" class="btn btn-primary">@Html.Icon("plus")طلب جديد</a>
+    }
+</div>
+
+<div class="tabs">
+    <a asp-action="Requests" class="@TabClass("")">الكل <em>@ViewData["cAll"]</em></a>
+    <a asp-action="Requests" asp-route-status="Urgent" class="@TabClass("Urgent")">عاجل <em>@ViewData["cUrgent"]</em></a>
+    <a asp-action="Requests" asp-route-status="Open" class="@TabClass("Open")">مفتوح <em>@ViewData["cOpen"]</em></a>
+    <a asp-action="Requests" asp-route-status="Matched" class="@TabClass("Matched")">تمت المطابقة <em>@ViewData["cMatched"]</em></a>
+    <a asp-action="Requests" asp-route-status="Fulfilled" class="@TabClass("Fulfilled")">مكتمل <em>@ViewData["cFulfilled"]</em></a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-wrap">
+        <table class="data">
+            <thead>
+                <tr>
+                    <th>الطلب</th>
+                    <th>الفصيلة</th>
+                    <th>الوحدات</th>
+                    <th>الحالة</th>
+                    <th>التاريخ</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    var editable = r.Status != "Fulfilled" && r.Status != "Cancelled";
+                    <tr>
+                        <td>
+                            <strong style="font-family:var(--font-display);direction:ltr">@Ref(r.RequestId)</strong>
+                            <div class="sub">@r.Department</div>
+                        </td>
+                        <td>@Html.BtChip(r.BloodType)</td>
+                        <td style="direction:ltr">@r.UnitsConfirmed / @r.UnitsNeeded</td>
+                        <td>@Html.RequestBadge(r.Priority, r.Status)</td>
+                        <td style="direction:ltr;white-space:nowrap">@r.CreatedAt.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <div class="row-actions">
+                                <a asp-action="Matched" asp-route-id="@r.RequestId" class="btn btn-soft btn-sm">المتبرعون</a>
+                                @if (editable)
+                                {
+                                    <a asp-action="EditRequest" asp-route-id="@r.RequestId" class="btn btn-ghost btn-sm">تعديل</a>
+                                    <form asp-action="FulfillRequest" asp-route-id="@r.RequestId" method="post" style="margin:0">
+                                        <button type="submit" class="btn btn-ghost btn-sm">إنهاء</button>
+                                    </form>
+                                    <form asp-action="CancelRequest" asp-route-id="@r.RequestId" method="post" style="margin:0"
+                                          onsubmit="return najdaConfirm(this, 'إلغاء الطلب؟', 'Cancel request?', 'سيتم إلغاء هذا الطلب.', 'This request will be cancelled.');">
+                                        <button type="submit" class="btn btn-sm suspend-btn">إلغاء</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty card">
+        @Html.Icon("list")
+        <p>لا توجد طلبات في هذه الحالة.</p>
+    </div>
+}

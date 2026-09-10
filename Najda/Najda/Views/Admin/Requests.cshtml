@@ -1,0 +1,112 @@
+@model List<BloodRequest>
+@{
+    ViewData["Title"] = "الطلبات";
+    Layout = "_LayoutDashboard";
+    var q = ViewData["q"] as string;
+    var bt = ViewData["bt"] as string;
+    var status = ViewData["status"] as string;
+    var priority = ViewData["priority"] as string;
+    var types = new[] { "O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-" };
+}
+
+<div class="page-head">
+    <h2 class="page-head-title">كل طلبات الدم</h2>
+    <p class="muted">راقب طلبات الدم من جميع المستشفيات عبر المنصة.</p>
+</div>
+
+<!-- headline counts -->
+<div class="grid status-grid" style="margin-block-end:22px">
+    <div class="stat"><div class="num">@ViewData["cTotal"]</div><div class="lbl">إجمالي الطلبات</div></div>
+    <div class="stat"><div class="num crimson">@ViewData["cUrgent"]</div><div class="lbl">عاجلة الآن</div></div>
+    <div class="stat"><div class="num">@ViewData["cOpen"]</div><div class="lbl">مفتوحة</div></div>
+    <div class="stat"><div class="num gold">@ViewData["cFulfilled"]</div><div class="lbl">مكتملة</div></div>
+</div>
+
+<!-- filters -->
+<form method="get" class="filters">
+    <div class="search-box">
+        @Html.Icon("search")
+        <input class="input" name="q" value="@q" placeholder="ابحث بالمستشفى أو المدينة أو السبب" />
+    </div>
+
+    <select class="select" name="bt">
+        <option value="">كل الفصائل</option>
+        @foreach (var t in types)
+        {
+            <option value="@t" selected="@(bt == t)">@t</option>
+        }
+    </select>
+
+    <select class="select" name="status">
+        <option value="">كل الحالات</option>
+        <option value="Open" selected="@(status == "Open")">مفتوح</option>
+        <option value="Matched" selected="@(status == "Matched")">تمت المطابقة</option>
+        <option value="Fulfilled" selected="@(status == "Fulfilled")">مكتمل</option>
+        <option value="Cancelled" selected="@(status == "Cancelled")">ملغى</option>
+    </select>
+
+    <label class="check-inline">
+        <input type="checkbox" name="priority" value="Urgent" checked="@(priority == "Urgent")" />
+        العاجلة فقط
+    </label>
+
+    <button type="submit" class="btn btn-primary btn-sm">تصفية</button>
+    <a asp-action="Requests" class="btn btn-ghost btn-sm">مسح</a>
+</form>
+
+<p class="muted" style="margin-block-end:14px">
+    @Model.Count طلب مطابق.
+</p>
+
+@if (Model.Any())
+{
+    <div class="table-wrap">
+        <table class="data">
+            <thead>
+                <tr>
+                    <th>المستشفى</th>
+                    <th>المدينة</th>
+                    <th>الفصيلة</th>
+                    <th>الوحدات</th>
+                    <th>السبب</th>
+                    <th>الحالة</th>
+                    <th>التاريخ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="who">
+                                <span class="avatar" style="inline-size:34px;block-size:34px;font-size:.8rem">🏥</span>
+                                <span class="nm">
+                                    @r.Hospital?.Name
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            @r.Hospital?.City
+                        </td>
+                        <td>@Html.BtChip(r.BloodType)</td>
+                        <td style="direction:ltr">@r.UnitsConfirmed / @r.UnitsNeeded</td>
+                        <td>
+                            <span class="sub" style="color:var(--muted)">
+                                @(r.Department ?? "—")
+                            </span>
+                        </td>
+                        <td>@Html.RequestBadge(r.Priority, r.Status)</td>
+                        <td style="direction:ltr;white-space:nowrap">@r.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty card">
+        @Html.Icon("list")
+        <p>لا توجد طلبات مطابقة للبحث.</p>
+    </div>
+}

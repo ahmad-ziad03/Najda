@@ -35,6 +35,10 @@ public class Donor
 
     public bool IsAvailable { get; set; } = true;
 
+    // Set by an administrator. A deactivated donor is excluded from matching
+    // and cannot sign in. Reversible — reactivating restores the account.
+    public bool IsActive { get; set; } = true;
+
     public DateTime? LastDonationDate { get; set; }
 
     // Link to the ASP.NET Identity account (AspNetUsers.Id).

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Najda.Models;
@@ -31,10 +31,6 @@ public class BloodRequest
 
     [MaxLength(150)]
     public string? Department { get; set; }
-
-    // English reason/department shown when the site is in English.
-    [MaxLength(150)]
-    public string? DepartmentEn { get; set; }
 
     public DateTime? NeededBy { get; set; }
 

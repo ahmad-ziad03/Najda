@@ -1,4 +1,4 @@
-﻿@model RegisterViewModel
+@model RegisterViewModel
 @{
     ViewData["Title"] = "إنشاء حساب";
     Layout = "_LayoutAuth";
@@ -7,160 +7,145 @@
 
 <div class="auth">
     <div class="auth-box">
-        <aside class="auth-aside">
-            <a asp-controller="Home" asp-action="Index" class="brand">
-                @Html.Icon("logo")<span><span data-lang-ar>نجدة</span><span data-lang-en>Najda</span></span>
-            </a>
-            <div class="aside-body">
-                <span class="auth-eyebrow"><span data-lang-ar>ابدأ الآن</span><span data-lang-en>Get started</span></span>
-                <h2><span data-lang-ar>دقيقتان تفصلانك عن إنقاذ حياة.</span><span data-lang-en>Two minutes from saving a life.</span></h2>
-                <p><span data-lang-ar>انضم لمجتمع المتبرعين والمستشفيات الذين يجعلون الدم يصل في وقته.</span><span data-lang-en>Join the community of donors and hospitals getting blood where it's needed, on time.</span></p>
-                <ul class="auth-features">
-                    <li><span class="fx">⏱️</span><span data-lang-ar>تسجيل خلال دقيقتين</span><span data-lang-en>Sign up in two minutes</span></li>
-                    <li><span class="fx">✅</span><span data-lang-ar>فصيلتك تُوثّق طبياً</span><span data-lang-en>Your blood type gets verified</span></li>
-                    <li><span class="fx">❤️</span><span data-lang-ar>كن سبب إنقاذ حياة</span><span data-lang-en>Be the reason someone lives</span></li>
-                </ul>
-            </div>
-            <svg class="deco" viewBox="0 0 24 24" fill="#fff"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z" /></svg>
-        </aside>
+    <aside class="auth-aside">
+        <a asp-controller="Home" asp-action="Index" class="brand">
+            @Html.Icon("logo")<span>نجدة</span>
+        </a>
+        <div class="aside-body">
+            <span class="auth-eyebrow">ابدأ الآن</span>
+            <h2>دقيقتان تفصلانك عن إنقاذ حياة.</h2>
+            <p>انضم لمجتمع المتبرعين والمستشفيات الذين يجعلون الدم يصل في وقته.</p>
+            <ul class="auth-features">
+                <li><span class="fx">⏱️</span>تسجيل خلال دقيقتين</li>
+                <li><span class="fx">✅</span>فصيلتك تُوثّق طبياً</li>
+                <li><span class="fx">❤️</span>كن سبب إنقاذ حياة</li>
+            </ul>
+        </div>
+        <svg class="deco" viewBox="0 0 24 24" fill="#fff"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z"/></svg>
+    </aside>
 
-        <main class="auth-main">
-            <div class="auth-card">
-                <div class="top">
-                    <a asp-controller="Home" asp-action="Index" class="brand" style="color:var(--pine)">
-                        @Html.Icon("logo")<span><span data-lang-ar>نجدة</span><span data-lang-en>Najda</span></span>
-                    </a>
-                    <button class="lang-toggle" type="button" onclick="toggleLang()">
-                        @Html.Icon("globe")<span data-lang-label>EN</span>
-                    </button>
+    <main class="auth-main">
+        <div class="auth-card">
+            <div class="top">
+                <a asp-controller="Home" asp-action="Index" class="brand" style="color:var(--pine)">
+                    @Html.Icon("logo")<span>نجدة</span>
+                </a>
+                            </div>
+
+            <h1>إنشاء حساب</h1>
+            <p class="sub">اختر نوع حسابك للبدء.</p>
+
+            <form asp-action="Register" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 px-3 small" role="alert" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none")"></div>
+
+                <!-- role toggle -->
+                <div class="seg" style="margin-block:16px 20px">
+                    <label>
+                        <input type="radio" asp-for="Role" value="Donor" onchange="setRole('Donor')" checked="@(!isHospital)" />
+                        <span class="seg-ic"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z"/></svg></span>
+                        <span class="seg-body"><strong>متبرع</strong><span>أريد التبرع بالدم</span></span>
+                    </label>
+                    <label>
+                        <input type="radio" asp-for="Role" value="Hospital" onchange="setRole('Hospital')" checked="@isHospital" />
+                        <span class="seg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M6 21V5l6-2 6 2v16M10 9h.01M14 9h.01M12 13v4"/></svg></span>
+                        <span class="seg-body"><strong>مستشفى</strong><span>نطلب الدم للمرضى</span></span>
+                    </label>
                 </div>
 
-                <h1><span data-lang-ar>إنشاء حساب</span><span data-lang-en>Create account</span></h1>
-                <p class="sub"><span data-lang-ar>اختر نوع حسابك للبدء.</span><span data-lang-en>Choose your account type to start.</span></p>
+                <!-- name (label switches by role) -->
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label" id="nameLbl">
+                        @(isHospital ? "اسم المستشفى" : "الاسم الكامل")
+                    </label>
+                    <input asp-for="FullName" class="form-control" placeholder="سامر الخطيب" id="nameInput" />
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
 
-                <form asp-action="Register" method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 px-3 small" role="alert" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none")"></div>
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                    <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
 
-                    <!-- role toggle -->
-                    <div class="seg" style="margin-block:16px 20px">
-                        <label>
-                            <input type="radio" asp-for="Role" value="Donor" onchange="setRole('Donor')" checked="@(!isHospital)" />
-                            <span class="seg-ic"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z" /></svg></span>
-                            <span class="seg-body"><strong data-lang-ar>متبرع</strong><strong data-lang-en>Donor</strong><span data-lang-ar>أريد التبرع بالدم</span><span data-lang-en>I want to donate blood</span></span>
-                        </label>
-                        <label>
-                            <input type="radio" asp-for="Role" value="Hospital" onchange="setRole('Hospital')" checked="@isHospital" />
-                            <span class="seg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M6 21V5l6-2 6 2v16M10 9h.01M14 9h.01M12 13v4" /></svg></span>
-                            <span class="seg-body"><strong data-lang-ar>مستشفى</strong><strong data-lang-en>Hospital</strong><span data-lang-ar>نطلب الدم للمرضى</span><span data-lang-en>We request blood</span></span>
-                        </label>
-                    </div>
-
-                    <!-- name (label switches by role) -->
-                    <div class="mb-3">
-                        <label asp-for="FullName" class="form-label" id="nameLbl">
-                            <span data-lang-ar>@(isHospital ? "اسم المستشفى" : "الاسم الكامل")</span><span data-lang-en>@(isHospital ? "Hospital name" : "Full name")</span>
-                        </label>
-                        <input asp-for="FullName" class="form-control" data-ph-ar="سامر الخطيب" data-ph-en="Samer Al-Khatib" id="nameInput" />
-                        <span asp-validation-for="FullName" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label"><span data-lang-ar>البريد الإلكتروني</span><span data-lang-en>Email</span></label>
-                        <input asp-for="Email" class="form-control" placeholder="name@example.com" />
-                        <span asp-validation-for="Email" class="text-danger small"></span>
-                    </div>
-
-                    <!-- donor-only -->
-                    <div data-role-group="Donor" hidden="@isHospital">
-                        <div>
-                            <div class="mb-3">
-                                <label asp-for="BloodType" class="form-label"><span data-lang-ar>فصيلة الدم</span><span data-lang-en>Blood type</span></label>
-                                <select asp-for="BloodType" class="form-select">
-                                    <option value="" data-ar="اختر الفصيلة" data-en="Select type">اختر الفصيلة</option>
-                                    <option>O+</option>
-                                    <option>O-</option>
-                                    <option>A+</option>
-                                    <option>A-</option>
-                                    <option>B+</option>
-                                    <option>B-</option>
-                                    <option>AB+</option>
-                                    <option>AB-</option>
-                                </select>
-                                <span asp-validation-for="BloodType" class="text-danger small"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label asp-for="Phone" class="form-label"><span data-lang-ar>رقم الهاتف</span><span data-lang-en>Phone</span></label>
-                                <input asp-for="Phone" class="form-control" type="tel" placeholder="+962 7 ..." dir="ltr" />
-                                <span asp-validation-for="Phone" class="text-danger small"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- hospital-only -->
-                    <div data-role-group="Hospital" hidden="@(!isHospital)">
-                        <div>
-                            <div class="mb-3">
-                                <label asp-for="HospitalNameEn" class="form-label"><span data-lang-ar>اسم المستشفى (إنجليزي)</span><span data-lang-en>Hospital name (English)</span></label>
-                                <input asp-for="HospitalNameEn" class="form-control" placeholder="Al-Bashir Hospital" dir="ltr" />
-                                <span asp-validation-for="HospitalNameEn" class="text-danger small"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label asp-for="LicenseNumber" class="form-label"><span data-lang-ar>رقم الترخيص</span><span data-lang-en>License number</span></label>
-                                <input asp-for="LicenseNumber" class="form-control" placeholder="MOH-00000" dir="ltr" />
-                                <div class="form-text"><span data-lang-ar>يُراجَع الحساب قبل الاعتماد.</span><span data-lang-en>Account is reviewed before approval.</span></div>
-                                <span asp-validation-for="LicenseNumber" class="text-danger small"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- location -->
-                    <div class="mb-3">
-                        <label asp-for="City" class="form-label"><span data-lang-ar>المدينة</span><span data-lang-en>City</span></label>
-                        <select asp-for="City" class="form-select">
-                            <option value="" data-ar="اختر المدينة" data-en="Select city">اختر المدينة</option>
-                            <option value="عمّان" data-ar="عمّان" data-en="Amman">عمّان</option>
-                            <option value="إربد" data-ar="إربد" data-en="Irbid">إربد</option>
-                            <option value="الزرقاء" data-ar="الزرقاء" data-en="Zarqa">الزرقاء</option>
-                            <option value="العقبة" data-ar="العقبة" data-en="Aqaba">العقبة</option>
-                            <option value="المفرق" data-ar="المفرق" data-en="Mafraq">المفرق</option>
-                            <option value="الكرك" data-ar="الكرك" data-en="Karak">الكرك</option>
-                        </select>
-                        <span asp-validation-for="City" class="text-danger small"></span>
-                    </div>
-
-                    <!-- password -->
+                <!-- donor-only -->
+                <div data-role-group="Donor" hidden="@isHospital">
                     <div>
                         <div class="mb-3">
-                            <label asp-for="Password" class="form-label"><span data-lang-ar>كلمة المرور</span><span data-lang-en>Password</span></label>
-                            <input asp-for="Password" class="form-control" placeholder="••••••••" />
-                            <span asp-validation-for="Password" class="text-danger small"></span>
+                            <label asp-for="BloodType" class="form-label">فصيلة الدم</label>
+                            <select asp-for="BloodType" class="form-select">
+                                <option value="">اختر الفصيلة</option>
+                                <option>O+</option><option>O-</option><option>A+</option><option>A-</option>
+                                <option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
+                            </select>
+                            <div class="form-text">ستُوثّق في المستشفى عند أول تبرّع.</div>
+                            <span asp-validation-for="BloodType" class="text-danger small"></span>
                         </div>
                         <div class="mb-3">
-                            <label asp-for="ConfirmPassword" class="form-label"><span data-lang-ar>تأكيد كلمة المرور</span><span data-lang-en>Confirm password</span></label>
-                            <input asp-for="ConfirmPassword" class="form-control" placeholder="••••••••" />
-                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            <label asp-for="Phone" class="form-label">رقم الهاتف</label>
+                            <input asp-for="Phone" class="form-control" type="tel" placeholder="+962 7 ..." dir="ltr" />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- consent -->
-                    <div class="form-check my-2">
-                        <input asp-for="AgreeTerms" class="form-check-input" />
-                        <label asp-for="AgreeTerms" class="form-check-label small">
-                            <span data-lang-ar>أوافق على شروط الاستخدام وسياسة الخصوصية، وأن بياناتي تُستخدم لأغراض المطابقة فقط.</span>
-                            <span data-lang-en>I agree to the Terms and Privacy Policy, and that my data is used for matching only.</span>
-                        </label>
-                        <div><span asp-validation-for="AgreeTerms" class="text-danger small"></span></div>
+                <!-- hospital-only -->
+                <div data-role-group="Hospital" hidden="@(!isHospital)">
+                    <div>
+                        <div class="mb-3">
+                            <label asp-for="LicenseNumber" class="form-label">رقم الترخيص</label>
+                            <input asp-for="LicenseNumber" class="form-control" placeholder="MOH-00000" dir="ltr" />
+                            <div class="form-text">يُراجَع الحساب قبل الاعتماد.</div>
+                            <span asp-validation-for="LicenseNumber" class="text-danger small"></span>
+                        </div>
                     </div>
+                </div>
 
-                    <button class="btn btn-primary btn-block btn-lg mt-2" type="submit"><span data-lang-ar>إنشاء الحساب</span><span data-lang-en>Create account</span></button>
-                </form>
+                <!-- location -->
+                <div class="mb-3">
+                    <label asp-for="City" class="form-label">المدينة</label>
+                    <select asp-for="City" class="form-select">
+                        <option value="">اختر المدينة</option>
+                        @foreach (var c in Cities.All)
+                        {
+                            <option value="@c">@c</option>
+                        }
+                    </select>
+                    <span asp-validation-for="City" class="text-danger small"></span>
+                </div>
 
-                <p class="auth-alt">
-                    <span data-lang-ar>لديك حساب بالفعل؟</span><span data-lang-en>Already have an account?</span>
-                    <a asp-action="Login"><span data-lang-ar>تسجيل الدخول</span><span data-lang-en>Log in</span></a>
-                </p>
-            </div>
-        </main>
+                <!-- password -->
+                <div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">كلمة المرور</label>
+                        <input asp-for="Password" class="form-control" placeholder="••••••••" />
+                        <div class="form-text">٦ أحرف على الأقل مع رقم ورمز.</div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">تأكيد كلمة المرور</label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="••••••••" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- consent -->
+                <div class="form-check my-2">
+                    <input asp-for="AgreeTerms" class="form-check-input" />
+                    <label asp-for="AgreeTerms" class="form-check-label small">
+                        أوافق على شروط الاستخدام وسياسة الخصوصية، وأن بياناتي تُستخدم لأغراض المطابقة فقط.
+                    </label>
+                    <div><span asp-validation-for="AgreeTerms" class="text-danger small"></span></div>
+                </div>
+
+                <button class="btn btn-primary btn-block btn-lg mt-2" type="submit">إنشاء الحساب</button>
+            </form>
+
+            <p class="auth-alt">
+                لديك حساب بالفعل؟
+                <a asp-action="Login">تسجيل الدخول</a>
+            </p>
+        </div>
+    </main>
     </div>
 </div>
 
@@ -172,12 +157,9 @@
                 g.hidden = g.getAttribute("data-role-group") !== role;
             });
             var hospital = role === "Hospital";
-            document.querySelector("#nameLbl [data-lang-ar]").textContent = hospital ? "اسم المستشفى" : "الاسم الكامل";
-            document.querySelector("#nameLbl [data-lang-en]").textContent = hospital ? "Hospital name" : "Full name";
+            document.getElementById("nameLbl").textContent = hospital ? "اسم المستشفى" : "الاسم الكامل";
             var inp = document.getElementById("nameInput");
-            inp.setAttribute("data-ph-ar", hospital ? "مستشفى البشير" : "سامر الخطيب");
-            inp.setAttribute("data-ph-en", hospital ? "Al-Bashir Hospital" : "Samer Al-Khatib");
-            applyLang(currentLang());
+            inp.setAttribute("placeholder", hospital ? "مستشفى البشير" : "سامر الخطيب");
         }
     </script>
 }

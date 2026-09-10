@@ -1,20 +1,16 @@
-﻿@{
-    // Controllers set ViewData["TitleAr"] / ViewData["TitleEn"].
+@{
+    // Controllers set ViewData["TitleAr"].
     var titleAr = ViewData["TitleAr"] as string ?? "";
-    var titleEn = ViewData["TitleEn"] as string ?? "";
 }
 <header class="topbar">
     <button class="side-toggle" aria-label="Menu" type="button" onclick="openSide()">@Html.Icon("menu")</button>
 
-    <h1><span data-lang-ar>@titleAr</span><span data-lang-en>@titleEn</span></h1>
+    <h1>@titleAr</h1>
 
     <div class="topbar-actions">
-        <button class="lang-toggle" type="button" onclick="toggleLang()">
-            @Html.Icon("globe")<span data-lang-label>EN</span>
-        </button>
         <form asp-controller="Account" asp-action="Logout" asp-route-returnUrl="/" method="post" class="topbar-logout">
             <button type="submit" class="btn btn-ghost btn-sm">
-                @Html.Icon("logout")<span data-lang-ar>خروج</span><span data-lang-en>Log out</span>
+                @Html.Icon("logout")خروج
             </button>
         </form>
     </div>

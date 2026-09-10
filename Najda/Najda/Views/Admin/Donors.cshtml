@@ -1,0 +1,116 @@
+@model List<Donor>
+@{
+    ViewData["Title"] = "المتبرعون";
+    Layout = "_LayoutDashboard";
+    var q = ViewData["q"] as string;
+    var bt = ViewData["bt"] as string;
+    var verified = ViewData["verified"] as string;
+    var status = ViewData["status"] as string;
+    var types = new[] { "O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-" };
+}
+
+<div class="page-head">
+    <h2 class="page-head-title">إدارة المتبرعين</h2>
+    <p class="muted">
+        @Model.Count متبرع مطابق للبحث.
+    </p>
+</div>
+
+<!-- filters -->
+<form method="get" class="filters">
+    <div class="search-box">
+        @Html.Icon("search")
+        <input class="input" name="q" value="@q" placeholder="ابحث بالاسم أو البريد أو المدينة" />
+    </div>
+
+    <select class="select" name="bt">
+        <option value="">كل الفصائل</option>
+        @foreach (var t in types)
+        {
+            <option value="@t" selected="@(bt == t)">@t</option>
+        }
+    </select>
+
+    <select class="select" name="verified">
+        <option value="">التوثيق: الكل</option>
+        <option value="1" selected="@(verified == "1")">موثّق</option>
+        <option value="0" selected="@(verified == "0")">غير موثّق</option>
+    </select>
+
+    <select class="select" name="status">
+        <option value="">الحالة: الكل</option>
+        <option value="active" selected="@(status == "active")">نشط</option>
+        <option value="inactive" selected="@(status == "inactive")">معطّل</option>
+    </select>
+
+    <button type="submit" class="btn btn-primary btn-sm">تصفية</button>
+    <a asp-action="Donors" class="btn btn-ghost btn-sm">مسح</a>
+</form>
+
+@if (Model.Any())
+{
+    <div class="table-wrap">
+        <table class="data">
+            <thead>
+                <tr>
+                    <th>المتبرع</th>
+                    <th>الفصيلة</th>
+                    <th>المدينة</th>
+                    <th>التوثيق</th>
+                    <th>الحالة</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="DonorDetails" asp-route-id="@d.DonorId" class="who" style="color:inherit">
+                                <span class="avatar" style="inline-size:36px;block-size:36px;font-size:.9rem">@d.FullName.Substring(0, 1)</span>
+                                <span>
+                                    <span class="nm">@d.FullName</span>
+                                    <div class="sub" style="direction:ltr">@d.Email</div>
+                                </span>
+                            </a>
+                        </td>
+                        <td>@Html.BtChip(d.BloodType)</td>
+                        <td>@d.City</td>
+                        <td>@Html.StatusBadge(d.IsVerified ? "Verified" : "Unverified")</td>
+                        <td>
+                            @if (d.IsActive)
+                            {
+                                <span class="badge badge-fulfilled">نشط</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-unverified">معطّل</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <a asp-action="DonorDetails" asp-route-id="@d.DonorId" class="btn btn-soft btn-sm">التفاصيل</a>
+                                <form asp-action="ToggleDonorActive" asp-route-id="@d.DonorId" method="post" style="margin:0">
+                                    <button type="submit" class="btn btn-ghost btn-sm">
+                                        @(d.IsActive ? "تعطيل" : "تفعيل")
+                                    </button>
+                                </form>
+                                <form asp-action="DeleteDonor" asp-route-id="@d.DonorId" method="post" style="margin:0"
+                                      onsubmit="return najdaConfirm(this, 'حذف المتبرع؟', 'Delete donor?', 'سيؤدي هذا إلى حذف @d.FullName نهائياً ولا يمكن التراجع.', 'This permanently deletes @d.FullName and cannot be undone.');">
+                                    <button type="submit" class="btn btn-sm suspend-btn">حذف</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty card">
+        @Html.Icon("users")
+        <p>لا يوجد متبرعون مطابقون للبحث.</p>
+    </div>
+}

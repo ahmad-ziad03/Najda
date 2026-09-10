@@ -1,0 +1,103 @@
+@model List<BloodRequest>
+@{
+    ViewData["Title"] = "الطلبات العاجلة";
+    var bt = ViewData["bt"] as string;
+    var city = ViewData["city"] as string;
+    var urgentCount = (int)(ViewData["cUrgent"] ?? 0);
+    var types = new[] { "O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-" };
+    var signedIn = User.Identity?.IsAuthenticated == true;
+}
+
+<header class="page-hero">
+    <div class="wrap center">
+        <span class="eyebrow">مباشر</span>
+        <h1 class="page-hero-title">طلبات دم تحتاج نجدتك الآن</h1>
+        <p class="page-hero-lead">
+            هذه حالات حقيقية نشرتها مستشفياتٌ عبر المنصة. إن كانت فصيلتك متوافقة، سجّل الدخول واستجب.
+        </p>
+        @if (urgentCount > 0)
+        {
+            <div class="chips" style="justify-content:center;margin-block-start:14px">
+                <span class="badge badge-urgent">@Html.Icon("drop")@urgentCount حالة عاجلة الآن</span>
+            </div>
+        }
+    </div>
+</header>
+
+<section class="section" style="padding-block-start:20px">
+    <div class="wrap">
+        <!-- filters -->
+        <form method="get" class="filters">
+            <select class="select" name="bt">
+                <option value="">كل الفصائل</option>
+                @foreach (var t in types)
+                {
+                    <option value="@t" selected="@(bt == t)">@t</option>
+                }
+            </select>
+            <select class="select" name="city">
+                <option value="">كل المدن</option>
+                @foreach (var c in Cities.All)
+                {
+                    <option value="@c" selected="@(city == c)">@c</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">تصفية</button>
+            <a asp-action="UrgentRequests" class="btn btn-ghost btn-sm">مسح</a>
+        </form>
+
+        @if (Model.Any())
+        {
+            <div class="grid req-grid">
+                @foreach (var r in Model)
+                {
+                    <article class="card card-hover req-card">
+                        <div class="req-top">
+                            @Html.Droplet(r.BloodType, true, "sm")
+                            <div class="req-head">
+                                <div class="req-hosp">@r.Hospital?.Name</div>
+                                <div class="meta">@Html.Icon("pin")<span>@r.Hospital?.City</span></div>
+                            </div>
+                            @Html.RequestBadge(r.Priority, r.Status)
+                        </div>
+                        <div class="req-need">
+                            مطلوب <strong>@r.UnitsNeeded</strong> وحدات
+                        </div>
+                        <p class="req-note">@r.Department</p>
+                        <div class="req-foot">
+                            <span class="meta">@Html.Icon("clock")<span style="direction:ltr">@r.CreatedAt.ToString("dd/MM/yyyy")</span></span>
+                            @if (signedIn && User.IsInRole("Donor"))
+                            {
+                                <a asp-controller="Donor" asp-action="Requests" class="btn btn-soft btn-sm">استجب</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-soft btn-sm">سجّل للاستجابة</a>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty card">
+                @Html.Icon("search")
+                <p>لا توجد طلبات مطابقة حالياً.</p>
+            </div>
+        }
+    </div>
+</section>
+
+@if (!signedIn)
+{
+    <section class="cta-band">
+        <div class="wrap cta-inner">
+            <h2>كن سبب إنقاذ حياة.</h2>
+            <p>سجّل كمتبرع لتصلك الحالات المتوافقة مع فصيلتك.</p>
+            <div class="cta-actions">
+                <a asp-controller="Account" asp-action="Register" class="btn btn-donate btn-lg">سجّل كمتبرع</a>
+            </div>
+        </div>
+    </section>
+}

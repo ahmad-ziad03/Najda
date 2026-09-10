@@ -1,0 +1,111 @@
+@model List<Hospital>
+@{
+    ViewData["Title"] = "المستشفيات";
+    Layout = "_LayoutDashboard";
+    var q = ViewData["q"] as string;
+    var status = ViewData["status"] as string;
+    var pending = Model.Where(h => h.Status == "Pending").ToList();
+    var others = Model.Where(h => h.Status != "Pending").ToList();
+}
+
+<div class="page-head">
+    <h2 class="page-head-title">إدارة المستشفيات</h2>
+    <p class="muted">اعتمد المستشفيات الجديدة وتابع نشاط الشركاء.</p>
+</div>
+
+<form method="get" class="filters">
+    <div class="search-box">
+        @Html.Icon("search")
+        <input class="input" name="q" value="@q" placeholder="ابحث بالاسم أو المدينة" />
+    </div>
+    <select class="select" name="status">
+        <option value="">كل الحالات</option>
+        <option value="Approved" selected="@(status == "Approved")">معتمد</option>
+        <option value="Pending" selected="@(status == "Pending")">قيد المراجعة</option>
+        <option value="Suspended" selected="@(status == "Suspended")">معلّق</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">تصفية</button>
+    <a asp-action="Hospitals" class="btn btn-ghost btn-sm">مسح</a>
+</form>
+
+@if (pending.Any())
+{
+    <h3 class="block-title" style="margin-block:8px 14px">بانتظار الاعتماد</h3>
+    @foreach (var h in pending)
+    {
+        <div class="card pending-card">
+            <div class="pc-ic">🏥</div>
+            <div class="pc-main">
+                <div class="pc-top">
+                    <strong>@h.Name</strong>
+                    @Html.StatusBadge("Pending")
+                </div>
+                <div class="rr-meta">
+                    <span class="meta">@Html.Icon("pin")<span>@h.City</span></span>
+                    <span class="meta">@Html.Icon("building")<span>@(h.LicenseNumber ?? "—")</span></span>
+                    <span class="meta" style="direction:ltr">@h.Email</span>
+                </div>
+            </div>
+            <div class="pc-actions">
+                <form asp-action="ApproveHospital" asp-route-id="@h.HospitalId" method="post" style="margin:0">
+                    <button type="submit" class="btn btn-primary btn-sm">@Html.Icon("check")اعتماد</button>
+                </form>
+                <form asp-action="RejectHospital" asp-route-id="@h.HospitalId" method="post" style="margin:0"
+                      onsubmit="return najdaConfirm(this, 'رفض المستشفى؟', 'Reject hospital?', 'سيؤدي هذا إلى رفض الطلب ولا يمكن التراجع.', 'This rejects the application and cannot be undone.');">
+                    <button type="submit" class="btn btn-ghost btn-sm">رفض</button>
+                </form>
+            </div>
+        </div>
+    }
+}
+
+<h3 class="block-title" style="margin-block:26px 14px">كل المستشفيات</h3>
+
+@if (others.Any())
+{
+    <div class="table-wrap">
+        <table class="data">
+            <thead>
+                <tr>
+                    <th>المستشفى</th>
+                    <th>المدينة</th>
+                    <th>مسؤول التواصل</th>
+                    <th>الحالة</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var h in others)
+                {
+                    <tr>
+                        <td>
+                            <div class="who">
+                                <span class="avatar" style="inline-size:36px;block-size:36px;font-size:.9rem">🏥</span>
+                                <span>
+                                    <span class="nm">@h.Name</span>
+                                    <div class="sub" style="direction:ltr">@h.Email</div>
+                                </span>
+                            </div>
+                        </td>
+                        <td>@h.City</td>
+                        <td>@(string.IsNullOrEmpty(h.ContactName) ? "—" : h.ContactName)</td>
+                        <td>@Html.StatusBadge(h.Status)</td>
+                        <td>
+                            <div class="row-actions">
+                                <a asp-action="ManageHospital" asp-route-id="@h.HospitalId" class="btn btn-soft btn-sm">إدارة</a>
+                                <a asp-action="EditHospital" asp-route-id="@h.HospitalId" class="btn btn-ghost btn-sm">تعديل</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty card">
+        @Html.Icon("building")
+        <p>لا توجد مستشفيات مطابقة.</p>
+    </div>
+}

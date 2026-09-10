@@ -1,4 +1,4 @@
-﻿@using System.Security.Claims
+@using System.Security.Claims
 @{
     // Controllers set:
     //   ViewData["Area"]   = "donor" | "hospital" | "admin"
@@ -7,57 +7,58 @@
     var active = ViewData["Active"] as string ?? "";
     string On(string key) => active == key ? "active" : "";
 
-    // menu items: (key, controller, action, icon, ar, en)
-    var menus = new Dictionary<string, (string key, string ctrl, string act, string icon, string ar, string en)[]>
+    // menu items: (key, controller, action, icon, label)
+    var menus = new Dictionary<string, (string key, string ctrl, string act, string icon, string ar)[]>
     {
         ["donor"] = new[]
         {
-            ("dash",     "Donor", "Dashboard", "home",    "لوحتي",             "Dashboard"),
-            ("requests", "Donor", "Requests",  "list",    "الطلبات المطابقة",  "Matched requests"),
-            ("history",  "Donor", "History",   "history", "سجل التبرعات",      "Donation history"),
-            ("profile",  "Donor", "Profile",   "user",    "ملفي الشخصي",       "My profile"),
+            ("dash",     "Donor", "Dashboard", "home",    "لوحتي"),
+            ("requests", "Donor", "Requests",  "list",    "الطلبات المطابقة"),
+            ("history",  "Donor", "History",   "history", "سجل التبرعات"),
+            ("profile",  "Donor", "Profile",   "user",    "ملفي الشخصي"),
         },
         ["hospital"] = new[]
         {
-            ("dash",     "Hospital", "Dashboard",   "home",  "لوحة المستشفى",       "Dashboard"),
-            ("post",     "Hospital", "PostRequest", "plus",  "طلب دم جديد",         "New request"),
-            ("requests", "Hospital", "Requests",    "list",  "إدارة الطلبات",       "Manage requests"),
-            ("matched",  "Hospital", "Matched",     "users", "المتبرعون المطابقون", "Matched donors"),
+            ("dash",     "Hospital", "Dashboard",   "home",  "لوحة المستشفى"),
+            ("post",     "Hospital", "PostRequest", "plus",  "طلب دم جديد"),
+            ("requests", "Hospital", "Requests",    "list",  "إدارة الطلبات"),
+            ("matched",  "Hospital", "Matched",     "users", "المتبرعون المطابقون"),
         },
         ["admin"] = new[]
         {
-            ("dash",      "Admin", "Dashboard", "chart",    "نظرة عامة",   "Overview"),
-            ("users",     "Admin", "Donors",    "users",    "المتبرعون",   "Donors"),
-            ("hospitals", "Admin", "Hospitals", "building", "المستشفيات",  "Hospitals"),
+            ("dash",      "Admin", "Dashboard", "chart",    "نظرة عامة"),
+            ("requests",  "Admin", "Requests",  "list",     "الطلبات"),
+            ("users",     "Admin", "Donors",    "users",    "المتبرعون"),
+            ("hospitals", "Admin", "Hospitals", "building", "المستشفيات"),
         },
     };
     var items = menus.TryGetValue(area, out var m) ? m : menus["donor"];
 
     var roleLabel = area switch
     {
-        "hospital" => ("حساب المستشفى", "Hospital account"),
-        "admin" => ("لوحة الإدارة", "Admin panel"),
-        _ => ("حساب المتبرع", "Donor account"),
+        "hospital" => "حساب المستشفى",
+        "admin"    => "لوحة الإدارة",
+        _          => "حساب المتبرع",
     };
 
     var displayName = User.Identity?.Name ?? "—";
     var initial = string.IsNullOrEmpty(displayName) ? "N" : displayName.Substring(0, 1).ToUpper();
-    var roleName = area switch { "hospital" => ("مستشفى", "Hospital"), "admin" => ("مدير النظام", "Administrator"), _ => ("متبرع", "Donor") };
+    var roleName = area switch { "hospital" => "مستشفى", "admin" => "مدير النظام", _ => "متبرع" };
 }
 
 <aside class="side" id="side">
     <a asp-controller="Home" asp-action="Index" class="brand">
         @Html.Icon("logo")
-        <span><span data-lang-ar>نجدة</span><span data-lang-en>Najda</span><small data-lang-ar>@roleLabel.Item1</small><small data-lang-en>@roleLabel.Item2</small></span>
+        <span>نجدة<small>@roleLabel</small></span>
     </a>
 
-    <div class="side-label"><span data-lang-ar>القائمة</span><span data-lang-en>Menu</span></div>
+    <div class="side-label">القائمة</div>
 
     @foreach (var it in items)
     {
         <a asp-controller="@it.ctrl" asp-action="@it.act" class="@On(it.key)">
             @Html.Icon(it.icon)
-            <span><span data-lang-ar>@it.ar</span><span data-lang-en>@it.en</span></span>
+            <span>@it.ar</span>
         </a>
     }
 
@@ -67,14 +68,14 @@
         <div class="av">@initial</div>
         <div>
             <div class="nm">@displayName</div>
-            <div class="rl"><span data-lang-ar>@roleName.Item1</span><span data-lang-en>@roleName.Item2</span></div>
+            <div class="rl">@roleName</div>
         </div>
     </div>
 
     <form asp-controller="Account" asp-action="Logout" asp-route-returnUrl="/" method="post">
         <button type="submit" class="side-logout">
             @Html.Icon("logout")
-            <span><span data-lang-ar>تسجيل الخروج</span><span data-lang-en>Log out</span></span>
+            <span>تسجيل الخروج</span>
         </button>
     </form>
 </aside>

@@ -1,0 +1,177 @@
+﻿@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "نظرة عامة";
+    Layout = "_LayoutDashboard";
+    var maxDemand = Model.DemandByType.Any() ? Model.DemandByType.Max(d => d.Count) : 1;
+}
+
+<div class="page-head">
+    <h2 class="page-head-title">نظرة عامة على المنصة</h2>
+    <p class="muted">مؤشرات الأداء الرئيسية لنجدة.</p>
+</div>
+
+<!-- headline stats -->
+<div class="grid status-grid">
+    <div class="card status-card">
+        <div class="sc-ic pine">👥</div>
+        <div>
+            <div class="sc-lbl">إجمالي المتبرعين</div>
+            <div class="sc-val">@Model.TotalDonors</div>
+            <div class="sc-hint">@Model.ActiveDonors نشط</div>
+        </div>
+    </div>
+    <div class="card status-card">
+        <div class="sc-ic ok">🏥</div>
+        <div>
+            <div class="sc-lbl">مستشفيات معتمدة</div>
+            <div class="sc-val">@Model.ApprovedHospitals</div>
+            @if (Model.PendingHospitals > 0)
+            {
+                <div class="sc-hint" style="color:var(--warn)">@Model.PendingHospitals بانتظار المراجعة</div>
+            }
+        </div>
+    </div>
+    <div class="card status-card">
+        <div class="sc-ic crimson">🩸</div>
+        <div>
+            <div class="sc-lbl">وحدات موفّرة</div>
+            <div class="sc-val">@Model.UnitsProvided</div>
+            <div class="sc-hint">@Model.TotalDonations تبرّع</div>
+        </div>
+    </div>
+    <div class="card status-card">
+        <div class="sc-ic warn">✅</div>
+        <div>
+            <div class="sc-lbl">فصائل موثّقة</div>
+            <div class="sc-val">@Model.VerifiedPercent%</div>
+            <div class="sc-hint">@Model.VerifiedDonors / @Model.TotalDonors</div>
+        </div>
+    </div>
+</div>
+
+<!-- pending approvals -->
+@if (Model.PendingList.Any())
+{
+    <div class="section-block">
+        <h3 class="block-title" style="margin-block-end:14px">بانتظار الاعتماد</h3>
+        @foreach (var h in Model.PendingList)
+        {
+            <div class="card pending-card">
+                <div class="pc-ic">🏥</div>
+                <div class="pc-main">
+                    <div class="pc-top">
+                        <strong>@h.Name</strong>
+                        @Html.StatusBadge("Pending")
+                    </div>
+                    <div class="rr-meta">
+                        <span class="meta">@Html.Icon("pin")<span>@h.City</span></span>
+                        <span class="meta">@Html.Icon("building")<span>@(h.LicenseNumber ?? "—")</span></span>
+                    </div>
+                </div>
+                <div class="pc-actions">
+                    <form asp-action="ApproveHospital" asp-route-id="@h.HospitalId" method="post" style="margin:0">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            @Html.Icon("check")اعتماد
+                        </button>
+                    </form>
+                    <form asp-action="RejectHospital" asp-route-id="@h.HospitalId" method="post" style="margin:0"
+                          onsubmit="return najdaConfirm(this, 'رفض المستشفى؟', 'سيؤدي هذا إلى رفض الطلب ولا يمكن التراجع.');">
+                        <button type="submit" class="btn btn-ghost btn-sm">رفض</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="dash-2col">
+    <!-- demand by blood type -->
+    <section class="card">
+        <div class="toolbar">
+            <h3 class="block-title">الطلب حسب الفصيلة</h3>
+        </div>
+        @if (Model.DemandByType.Any())
+        {
+            <div class="demand">
+                @foreach (var d in Model.DemandByType.OrderByDescending(x => x.Count))
+                {
+                    <div class="dm-col">
+                        <div class="dm-bar" style="height:@(Math.Max(6, (int)(d.Count / (double)maxDemand * 150)))px">
+                            <span class="dm-v">@d.Count</span>
+                        </div>
+                        @Html.BtChip(d.BloodType)
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="muted">لا توجد طلبات بعد.</p>
+        }
+    </section>
+
+    <!-- supply -->
+    <aside class="card">
+        <h3 class="block-title" style="margin-block-end:6px">توفّر المتبرعين</h3>
+        <p class="muted" style="font-size:.86rem;margin-block-end:16px">متبرعون متاحون حسب الفصيلة</p>
+        @if (Model.SupplyByType.Any())
+        {
+            var maxSupply = Model.SupplyByType.Max(s => s.Count);
+            <div class="md-bars">
+                @foreach (var s in Model.SupplyByType.OrderByDescending(x => x.Count))
+                {
+                    <div class="md-row">
+                        @Html.BtChip(s.BloodType)
+                        <div class="progress" style="flex:1"><i style="width:@((int)(s.Count / (double)maxSupply * 100))%"></i></div>
+                        <span class="md-pct">@s.Count</span>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="muted">لا يوجد متبرعون متاحون.</p>
+        }
+    </aside>
+</div>
+
+<!-- recent requests -->
+<div class="section-block">
+    <div class="card">
+        <div class="toolbar">
+            <h3 class="block-title">أحدث الطلبات</h3>
+        </div>
+        @if (Model.RecentRequests.Any())
+        {
+            <div class="table-wrap" style="border:0">
+                <table class="data">
+                    <thead>
+                        <tr>
+                            <th>المستشفى</th>
+                            <th>الفصيلة</th>
+                            <th>الوحدات</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.RecentRequests)
+                        {
+                            <tr>
+                                <td>@r.Hospital?.Name</td>
+                                <td>@Html.BtChip(r.BloodType)</td>
+                                <td style="direction:ltr">@r.UnitsConfirmed / @r.UnitsNeeded</td>
+                                <td>@Html.RequestBadge(r.Priority, r.Status)</td>
+                                <td style="direction:ltr;white-space:nowrap">@r.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="muted">لا توجد طلبات بعد.</p>
+        }
+    </div>
+</div>

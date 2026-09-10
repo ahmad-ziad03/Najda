@@ -1,0 +1,106 @@
+@model DonorDashboardViewModel
+@{
+    ViewData["Title"] = "لوحتي";
+    Layout = "_LayoutDashboard";
+    var d = Model.Donor;
+}
+
+<div class="welcome">
+    <div>
+        <h2 class="page-head-title">أهلاً، @d.FullName 👋</h2>
+        <p class="muted">شكراً لكونك مستعداً دائماً للنجدة. هذه حالتك اليوم.</p>
+    </div>
+    <a asp-action="Requests" class="btn btn-donate">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z"/></svg>
+        تصفّح الطلبات
+    </a>
+</div>
+
+<div class="grid status-grid">
+    <div class="card status-card">
+        @Html.Droplet(d.BloodType, d.IsVerified, "lg")
+        <div>
+            <div class="sc-lbl">فصيلة دمك</div>
+            <div class="sc-val" style="direction:ltr">@d.BloodType</div>
+            @Html.StatusBadge(d.IsVerified ? "Verified" : "Unverified")
+        </div>
+    </div>
+
+    <div class="card status-card">
+        <div class="sc-ic @(d.IsAvailable ? "ok" : "crimson")">@(d.IsAvailable ? "✓" : "✕")</div>
+        <div>
+            <div class="sc-lbl">حالة التوفّر</div>
+            <div class="sc-val sm">
+                @(d.IsAvailable ? "متاح للتبرّع" : "غير متاح")
+            </div>
+            <a asp-action="Profile" class="sc-hint" style="color:var(--teal-dark)">تغيير</a>
+        </div>
+    </div>
+
+    <div class="card status-card">
+        <div class="sc-ic warn">⏳</div>
+        <div>
+            <div class="sc-lbl">الأهلية القادمة</div>
+            <div class="sc-val sm" style="direction:ltr">@(d.NextEligibleDate?.ToString("dd/MM/yyyy") ?? "—")</div>
+            <div class="sc-hint">
+                @(d.IsEligibleNow ? "مؤهّل الآن" : "بعد ٥٦ يوماً من آخر تبرّع")
+            </div>
+        </div>
+    </div>
+
+    <div class="card status-card">
+        <div class="sc-ic pine">🩸</div>
+        <div>
+            <div class="sc-lbl">إجمالي تبرعاتك</div>
+            <div class="sc-val">@Model.TotalDonations</div>
+            <a asp-action="History" class="sc-hint" style="color:var(--teal-dark)">عرض السجل</a>
+        </div>
+    </div>
+</div>
+
+<div class="section-block">
+    <div class="row-between" style="margin-block-end:16px">
+        <h3 class="block-title">طلبات تناسب فصيلتك</h3>
+        <a asp-action="Requests" class="link-more">عرض الكل (@Model.MatchingOpenRequests) ←</a>
+    </div>
+
+    @if (Model.Preview.Any())
+    {
+        <div class="stack" style="--stack:14px">
+            @foreach (var r in Model.Preview)
+            {
+                var responded = Model.RespondedIds.Contains(r.RequestId);
+                <div class="req-row card">
+                    @Html.Droplet(r.BloodType, true, "sm")
+                    <div class="rr-main">
+                        <div class="rr-top">
+                            <strong>@r.Hospital?.Name</strong>
+                            @Html.RequestBadge(r.Priority, r.Status)
+                        </div>
+                        <div class="rr-meta">
+                            <span class="meta">@Html.Icon("pin")<span>@r.Hospital?.City</span></span>
+                            <span class="meta">@Html.Icon("drop")<span>@r.UnitsConfirmed / @r.UnitsNeeded وحدات</span></span>
+                        </div>
+                    </div>
+                    <div class="rr-actions">
+                        @if (responded)
+                        {
+                            <span class="badge badge-fulfilled">تمّت الاستجابة</span>
+                        }
+                        else
+                        {
+                            <a asp-action="Requests" class="btn btn-soft btn-sm">استجب</a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty card">
+            @Html.Icon("search")
+            <p>لا توجد طلبات تناسب فصيلتك حالياً. سنعلمك عند وجود حالة.</p>
+        </div>
+    }
+</div>

@@ -1,0 +1,127 @@
+@model DonorProfileViewModel
+@{
+    ViewData["Title"] = "ملفي الشخصي";
+    Layout = "_LayoutDashboard";
+    var cities = Cities.All;
+    var donations = (int)(ViewData["Donations"] ?? 0);
+}
+
+<div class="page-head">
+    <h2 class="page-head-title">ملفي الشخصي</h2>
+    <p class="muted">حدّث بياناتك وحالة توفّرك.</p>
+</div>
+
+<div class="profile-grid">
+    <!-- identity card -->
+    <aside class="card profile-id">
+        @Html.Droplet(Model.BloodType, Model.IsVerified, "lg")
+        <h3 class="prof-name">@Model.FullName</h3>
+        <p class="muted">@Model.City</p>
+        @Html.StatusBadge(Model.IsVerified ? "Verified" : "Unverified")
+        <div class="prof-mini">
+            <div><div class="pm-num">@donations</div><div class="pm-lbl">تبرعات</div></div>
+            <div><div class="pm-num" style="direction:ltr">@Model.BloodType</div><div class="pm-lbl">الفصيلة</div></div>
+        </div>
+        @if (Model.IsVerified)
+        {
+            <div class="verify-info">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>
+                فصيلتك موثّقة من مستشفى. لا يمكن تعديلها إلا من قبل مستشفى.
+            </div>
+        }
+    </aside>
+
+    <!-- edit form -->
+    <section class="card">
+        <div class="toolbar">
+            <h3 class="block-title">المعلومات الشخصية</h3>
+        </div>
+
+        <form asp-action="Profile" method="post">
+            <input type="hidden" asp-for="DonorId" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 px-3 small"></div>
+
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label">الاسم الكامل</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                <input asp-for="Email" class="form-control" dir="ltr" readonly />
+                <div class="form-text">البريد مرتبط بحسابك ولا يُعدّل هنا.</div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Phone" class="form-label">رقم الهاتف</label>
+                <input asp-for="Phone" class="form-control" dir="ltr" />
+                <span asp-validation-for="Phone" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="City" class="form-label">المدينة</label>
+                <select asp-for="City" class="form-select">
+                    @foreach (var c in cities)
+                    {
+                        <option value="@c" selected="@(Model.City == c)">@c</option>
+                    }
+                </select>
+                <span asp-validation-for="City" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Area" class="form-label">المنطقة</label>
+                <input asp-for="Area" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">فصيلة الدم</label>
+                @if (Model.IsVerified)
+                {
+                    <div class="locked-field" style="max-width:160px">
+                        <input class="form-control" value="@Model.BloodType" disabled style="direction:ltr" />
+                        <svg class="lock-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke-linecap="round"/></svg>
+                    </div>
+                    <div class="form-text">
+                        فصيلتك موثّقة ومقفلة — تُعدّل فقط من قبل مستشفى بعد إعادة الفحص.
+                    </div>
+                }
+                else
+                {
+                    <select asp-for="BloodType" class="form-select" style="max-width:200px">
+                        @foreach (var t in new[] { "O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-" })
+                        {
+                            <option value="@t" selected="@(Model.BloodType == t)">@t</option>
+                        }
+                    </select>
+                    <div class="form-text">
+                        يمكنك تعديل فصيلتك الآن. ستُوثّق في المستشفى عند أول تبرّع.
+                    </div>
+                }
+            </div>
+
+            <hr class="divider" />
+
+            <div class="avail-row">
+                <div>
+                    <strong>متاح للتبرّع</strong>
+                    <p class="muted" style="font-size:.88rem">أوقفه مؤقتاً إن كنت غير قادر على التبرّع حالياً.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" asp-for="IsAvailable" />
+                    <span class="track"></span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                <a asp-action="Dashboard" class="btn btn-ghost">إلغاء</a>
+            </div>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

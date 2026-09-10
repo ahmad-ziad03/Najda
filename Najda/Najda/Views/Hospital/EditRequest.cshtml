@@ -1,0 +1,82 @@
+@model RequestFormViewModel
+@{
+    ViewData["Title"] = "تعديل الطلب";
+    Layout = "_LayoutDashboard";
+    var types = new[] { "O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-" };
+    var confirmed = (int)(ViewData["Confirmed"] ?? 0);
+    var reqRef = ViewData["Ref"] as string ?? ("REQ-" + Model.RequestId);
+}
+
+<a asp-action="Requests" class="back-link">← عودة للطلبات</a>
+
+<div class="page-head">
+    <h2 class="page-head-title">تعديل الطلب <span style="direction:ltr;color:var(--muted)">@reqRef</span></h2>
+    <p class="muted">حدّث تفاصيل الطلب. لا يمكن جعل الوحدات أقل من المؤكّدة (@confirmed).</p>
+</div>
+
+<div class="post-grid">
+    <section class="card">
+        <form asp-action="EditRequest" method="post">
+            <input type="hidden" asp-for="RequestId" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 px-3 small"></div>
+
+            <div class="mb-3">
+                <label asp-for="BloodType" class="form-label">فصيلة الدم المطلوبة</label>
+                <select asp-for="BloodType" class="form-select">
+                    @foreach (var t in types)
+                    {
+                        <option value="@t" selected="@(Model.BloodType == t)">@t</option>
+                    }
+                </select>
+                <span asp-validation-for="BloodType" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="UnitsNeeded" class="form-label">عدد الوحدات</label>
+                <input asp-for="UnitsNeeded" class="form-control" type="number" min="1" max="50" dir="ltr" />
+                <span asp-validation-for="UnitsNeeded" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">مستوى الأولوية</label>
+                <div class="prio">
+                    <label>
+                        <input type="radio" asp-for="Priority" value="Urgent" checked="@(Model.Priority != "Normal")" />
+                        <span class="prio-box prio-urgent"><strong>عاجل</strong><span>حالة طارئة الآن</span></span>
+                    </label>
+                    <label>
+                        <input type="radio" asp-for="Priority" value="Normal" checked="@(Model.Priority == "Normal")" />
+                        <span class="prio-box prio-open"><strong>عادي</strong><span>خلال الأيام القادمة</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Department" class="form-label">القسم / سبب الطلب</label>
+                <input asp-for="Department" class="form-control" />
+                <span asp-validation-for="Department" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="NeededBy" class="form-label">الموعد النهائي (اختياري)</label>
+                <input asp-for="NeededBy" class="form-control" type="date" dir="ltr" />
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">حفظ التغييرات</button>
+                <a asp-action="Requests" class="btn btn-ghost btn-lg">إلغاء</a>
+            </div>
+        </form>
+    </section>
+
+    <aside class="preview-col">
+        <div class="preview-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>
+            تعديل الطلب يحدّث ما يراه المتبرعون فوراً. الوحدات المؤكّدة: @confirmed.
+        </div>
+    </aside>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

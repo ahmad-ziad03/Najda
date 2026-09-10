@@ -1,0 +1,130 @@
+@model Donor
+@{
+    ViewData["Title"] = "تفاصيل المتبرع";
+    Layout = "_LayoutDashboard";
+    var donations = ViewData["Donations"] as List<Donation> ?? new List<Donation>();
+}
+
+<a asp-action="Donors" class="back-link">← عودة للمتبرعين</a>
+
+<div class="card hosp-header">
+    <div>@Html.Droplet(Model.BloodType, Model.IsVerified, "lg")</div>
+    <div class="hh-main">
+        <div class="hh-top">
+            <h2>@Model.FullName</h2>
+            @Html.StatusBadge(Model.IsVerified ? "Verified" : "Unverified")
+            @if (Model.IsActive)
+            {
+                <span class="badge badge-fulfilled">نشط</span>
+            }
+            else
+            {
+                <span class="badge badge-unverified">معطّل</span>
+            }
+        </div>
+        <div class="rr-meta">
+            <span class="meta" style="direction:ltr">@Model.Email</span>
+            <span class="meta">@Html.Icon("pin")<span>@Model.City@(string.IsNullOrEmpty(Model.Area) ? "" : " · " + Model.Area)</span></span>
+            @if (!string.IsNullOrEmpty(Model.Phone))
+            {
+                <span class="meta" style="direction:ltr">@Model.Phone</span>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="manage-grid">
+    <div>
+        <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:16px">
+            <div class="stat"><div class="num">@donations.Count</div><div class="lbl">إجمالي التبرعات</div></div>
+            <div class="stat"><div class="num crimson">@(donations.Count * 3)</div><div class="lbl">حياة يُحتمل إنقاذها</div></div>
+            <div class="stat"><div class="num gold" style="direction:ltr">@Model.BloodType</div><div class="lbl">الفصيلة</div></div>
+        </div>
+
+        <div class="card" style="margin-block-start:22px">
+            <div class="toolbar">
+                <h3 class="block-title">سجل التبرعات</h3>
+            </div>
+            @if (donations.Any())
+            {
+                <div class="table-wrap" style="border:0">
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>المستشفى</th>
+                                <th>الفصيلة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var dn in donations)
+                            {
+                                <tr>
+                                    <td style="direction:ltr;white-space:nowrap">@dn.DonationDate.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @(dn.Hospital?.Name ?? "—")
+                                    </td>
+                                    <td>@Html.BtChip(dn.BloodType)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty">
+                    @Html.Icon("drop")
+                    <p>لم يقم هذا المتبرع بأي تبرّع بعد.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <aside class="stack" style="--stack:22px">
+        <div class="card sub-card">
+            <div class="sub-head">
+                <span class="badge @(Model.IsVerified ? "badge-verified" : "badge-unverified")">
+                    حالة الفصيلة
+                </span>
+                <h3>@(Model.IsVerified ? "موثّقة" : "غير موثّقة")</h3>
+            </div>
+            <ul class="sub-meta">
+                <li>
+                    <span class="sm-k">وثّقها</span>
+                    <strong>@(Model.VerifiedByHospital?.Name ?? "—")</strong>
+                </li>
+                <li>
+                    <span class="sm-k">تاريخ التوثيق</span>
+                    <strong style="direction:ltr">@(Model.VerifiedDate?.ToString("dd/MM/yyyy") ?? "—")</strong>
+                </li>
+                <li>
+                    <span class="sm-k">آخر تبرّع</span>
+                    <strong style="direction:ltr">@(Model.LastDonationDate?.ToString("dd/MM/yyyy") ?? "—")</strong>
+                </li>
+                <li>
+                    <span class="sm-k">الأهلية القادمة</span>
+                    <strong style="direction:ltr">@(Model.NextEligibleDate?.ToString("dd/MM/yyyy") ?? "—")</strong>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3 class="block-title" style="margin-block-end:14px">إجراءات</h3>
+            <div class="stack" style="--stack:14px">
+                <form asp-action="ToggleDonorActive" asp-route-id="@Model.DonorId" method="post">
+                    <button type="submit" class="btn btn-ghost btn-block">
+                        @(Model.IsActive ? "تعطيل الحساب" : "تفعيل الحساب")
+                    </button>
+                </form>
+                <form asp-action="DeleteDonor" asp-route-id="@Model.DonorId" method="post"
+                      onsubmit="return najdaConfirm(this, 'حذف المتبرع؟', 'Delete donor?', 'سيؤدي هذا إلى حذف @Model.FullName نهائياً ولا يمكن التراجع.', 'This permanently deletes @Model.FullName and cannot be undone.');">
+                    <button type="submit" class="btn btn-block suspend-btn">حذف نهائي</button>
+                </form>
+            </div>
+            <p class="muted" style="font-size:.82rem;margin-block-start:12px">
+                الحذف غير متاح إن كان للمتبرع سجل تبرعات.
+            </p>
+        </div>
+    </aside>
+</div>

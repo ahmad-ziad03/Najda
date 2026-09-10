@@ -1,0 +1,77 @@
+@model List<BloodRequest>
+@{
+    ViewData["Title"] = "الطلبات المطابقة";
+    Layout = "_LayoutDashboard";
+    var donor = ViewData["Donor"] as Donor;
+    var respondedIds = ViewData["RespondedIds"] as HashSet<int> ?? new HashSet<int>();
+}
+
+<div class="page-head">
+    <h2 class="page-head-title">طلبات تحتاج نجدتك</h2>
+    <p class="muted">
+        مرتّبة حسب الأقرب والأكثر إلحاحاً. فصيلتك: <strong style="color:var(--crimson);direction:ltr">@donor?.BloodType</strong>
+    </p>
+</div>
+
+@if (donor is not null && !donor.IsAvailable)
+{
+    <div class="info-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>
+        حالتك حالياً "غير متاح". لا يزال بإمكانك الاستجابة، لكن فعّل التوفّر لتصل لك الحالات القريبة.
+    </div>
+}
+
+@if (Model.Any())
+{
+    <div class="stack" style="--stack:14px">
+        @foreach (var r in Model)
+        {
+            var responded = respondedIds.Contains(r.RequestId);
+            var sameCity = donor != null && r.Hospital?.City == donor.City;
+            <div class="req-row card">
+                @Html.Droplet(r.BloodType, true, "sm")
+                <div class="rr-main">
+                    <div class="rr-top">
+                        <strong>@r.Hospital?.Name</strong>
+                        @Html.RequestBadge(r.Priority, r.Status)
+                        @if (sameCity)
+                        {
+                            <span class="badge badge-open">قريب منك</span>
+                        }
+                    </div>
+                    <p class="muted" style="font-size:.9rem;margin-block:2px 6px">
+                        @r.Department
+                    </p>
+                    <div class="rr-meta">
+                        <span class="meta">@Html.Icon("pin")<span>@r.Hospital?.City</span></span>
+                        <span class="meta">@Html.Icon("drop")<span>@r.UnitsConfirmed / @r.UnitsNeeded وحدات</span></span>
+                    </div>
+                </div>
+                <div class="rr-actions">
+                    @if (responded)
+                    {
+                        <span class="badge badge-fulfilled" style="margin-inline-end:6px">تمّت استجابتك</span>
+                        <form asp-action="Withdraw" method="post" style="margin:0">
+                            <input type="hidden" name="requestId" value="@r.RequestId" />
+                            <button type="submit" class="btn btn-ghost btn-sm">تراجع</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Respond" method="post" style="margin:0">
+                            <input type="hidden" name="requestId" value="@r.RequestId" />
+                            <button type="submit" class="btn btn-donate btn-sm">استجب الآن</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="empty card">
+        @Html.Icon("search")
+        <p>لا توجد طلبات تناسب فصيلتك حالياً. تفقّد لاحقاً.</p>
+    </div>
+}

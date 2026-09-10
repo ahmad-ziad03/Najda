@@ -1,0 +1,119 @@
+@model HospitalEditViewModel
+@{
+    ViewData["Title"] = "تعديل بيانات المستشفى";
+    Layout = "_LayoutDashboard";
+    var cities = Cities.All;
+}
+
+<a asp-action="ManageHospital" asp-route-id="@Model.HospitalId" class="back-link">← عودة لإدارة المستشفى</a>
+
+<div class="page-head">
+    <h2 class="page-head-title">تعديل بيانات المستشفى</h2>
+    <p class="muted">حدّث بيانات المستشفى ومسؤول التواصل، ثم احفظ التغييرات.</p>
+</div>
+
+<form asp-action="EditHospital" method="post">
+    <input type="hidden" asp-for="HospitalId" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 px-3 small"></div>
+
+    <div class="edit-grid">
+        <!-- hospital data -->
+        <section class="card">
+            <h3 class="block-title" style="margin-block-end:16px">بيانات المستشفى</h3>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">اسم المستشفى</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">البريد الرسمي</label>
+                <input asp-for="Email" class="form-control" dir="ltr" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Phone" class="form-label">الهاتف</label>
+                <input asp-for="Phone" class="form-control" dir="ltr" />
+                <span asp-validation-for="Phone" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="LicenseNumber" class="form-label">رقم الترخيص</label>
+                <input asp-for="LicenseNumber" class="form-control" dir="ltr" />
+                <span asp-validation-for="LicenseNumber" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label">الحالة</label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Approved">معتمد</option>
+                    <option value="Pending">قيد المراجعة</option>
+                    <option value="Suspended">معلّق</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="City" class="form-label">المدينة</label>
+                <select asp-for="City" class="form-select">
+                    @foreach (var c in cities)
+                    {
+                        <option value="@c" selected="@(Model.City == c)">@c</option>
+                    }
+                </select>
+                <span asp-validation-for="City" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Area" class="form-label">المنطقة</label>
+                <input asp-for="Area" class="form-control" />
+            </div>
+        </section>
+
+        <!-- contact person -->
+        <section class="card">
+            <h3 class="block-title" style="margin-block-end:4px">مسؤول التواصل</h3>
+            <p class="muted" style="font-size:.88rem;margin-block-end:16px">الشخص المسؤول عن التواصل بين المنصة والمستشفى.</p>
+
+            <div class="mb-3">
+                <label asp-for="ContactName" class="form-label">الاسم</label>
+                <input asp-for="ContactName" class="form-control" />
+                <span asp-validation-for="ContactName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContactEmail" class="form-label">البريد الإلكتروني</label>
+                <input asp-for="ContactEmail" class="form-control" dir="ltr" />
+                <span asp-validation-for="ContactEmail" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContactPhone" class="form-label">رقم الهاتف</label>
+                <input asp-for="ContactPhone" class="form-control" dir="ltr" />
+                <span asp-validation-for="ContactPhone" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContactAppointedDate" class="form-label">تاريخ التعيين</label>
+                <input asp-for="ContactAppointedDate" type="date" class="form-control" dir="ltr" />
+                <span asp-validation-for="ContactAppointedDate" class="text-danger small"></span>
+            </div>
+
+            <div class="contact-hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>
+                تظهر هذه البيانات في صفحة إدارة المستشفى.
+            </div>
+        </section>
+    </div>
+
+    <div class="form-actions" style="margin-block-start:22px">
+        <button type="submit" class="btn btn-primary btn-lg">حفظ التغييرات</button>
+        <a asp-action="ManageHospital" asp-route-id="@Model.HospitalId" class="btn btn-ghost btn-lg">إلغاء</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

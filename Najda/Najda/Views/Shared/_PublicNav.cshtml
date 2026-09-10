@@ -1,4 +1,4 @@
-﻿@{
+@{
     // Controllers set ViewData["ActiveNav"] to "home" | "about" | "requests".
     var active = ViewData["ActiveNav"] as string ?? "";
     string On(string key) => active == key ? "active" : "";
@@ -7,32 +7,44 @@
     <div class="wrap nav-inner">
         <a asp-controller="Home" asp-action="Index" class="brand">
             @Html.Icon("logo")
-            <span><span data-lang-ar>نجدة</span><span data-lang-en>Najda</span><small data-lang-ar>منصة التبرع بالدم</small><small data-lang-en>Blood Donation Platform</small></span>
+            <span>نجدة<small>منصة التبرع بالدم</small></span>
         </a>
 
         <button class="nav-burger" aria-label="Menu" data-nav-burger>@Html.Icon("menu")</button>
 
         <div class="nav-links" id="navlinks">
             <a asp-controller="Home" asp-action="Index" class="@On("home")">
-                <span data-lang-ar>الرئيسية</span><span data-lang-en>Home</span>
+                الرئيسية
             </a>
             <a asp-controller="Home" asp-action="About" class="@On("about")">
-                <span data-lang-ar>كيف تعمل</span><span data-lang-en>How it works</span>
+                كيف تعمل
             </a>
-            <a asp-controller="Home" asp-action="Index" class="@On("requests")">
-                <span data-lang-ar>الطلبات العاجلة</span><span data-lang-en>Urgent requests</span>
+            <a asp-controller="Home" asp-action="UrgentRequests" class="@On("requests")">
+                الطلبات العاجلة
             </a>
 
             <div class="nav-actions">
-                <button class="lang-toggle" type="button" onclick="toggleLang()">
-                    @Html.Icon("globe")<span data-lang-label>EN</span>
-                </button>
-                <a asp-controller="Account" asp-action="Login" class="btn btn-ghost btn-sm">
-                    <span data-lang-ar>تسجيل الدخول</span><span data-lang-en>Log in</span>
-                </a>
-                <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-sm">
-                    <span data-lang-ar>سجّل الآن</span><span data-lang-en>Sign up</span>
-                </a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    var ctrl = User.IsInRole("Admin") ? "Admin" : User.IsInRole("Hospital") ? "Hospital" : "Donor";
+                    <a asp-controller="@ctrl" asp-action="Dashboard" class="btn btn-ghost btn-sm">
+                        لوحتي
+                    </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="margin:0">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            خروج
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-ghost btn-sm">
+                        تسجيل الدخول
+                    </a>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-sm">
+                        سجّل الآن
+                    </a>
+                }
             </div>
         </div>
     </div>

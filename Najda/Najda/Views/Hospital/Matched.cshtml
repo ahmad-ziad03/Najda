@@ -1,0 +1,176 @@
+@using Najda.Models
+@{
+    ViewData["Title"] = "المتبرعون المطابقون";
+    Layout = "_LayoutDashboard";
+    var request = ViewData["Request"] as BloodRequest;
+    var matches = ViewData["Matches"] as List<Donor> ?? new List<Donor>();
+    var responderIds = ViewData["ResponderIds"] as HashSet<int> ?? new HashSet<int>();
+    var openRequests = ViewData["OpenRequests"] as List<BloodRequest> ?? new List<BloodRequest>();
+    var refMap = ViewData["RefMap"] as Dictionary<int, string> ?? new Dictionary<int, string>();
+    string Ref(int rid) => refMap.TryGetValue(rid, out var v) ? v : $"REQ-{rid}";
+    var types = new[] { "O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-" };
+}
+
+<div class="page-head">
+    <h2 class="page-head-title">المتبرعون المطابقون</h2>
+    <p class="muted">اختر طلباً لعرض المتبرعين المتوافقين والأقرب إليك، ووثّق فصيلتهم بعد التبرّع.</p>
+</div>
+
+@if (request is null)
+{
+    <div class="empty card">
+        @Html.Icon("list")
+        <p>لا توجد طلبات مفتوحة حالياً. انشر طلباً لرؤية المتبرعين المطابقين.</p>
+    </div>
+    return;
+}
+
+<!-- request selector -->
+@if (openRequests.Count > 1)
+{
+    <form method="get" class="filters" style="margin-block-end:18px">
+        <label class="form-label" style="margin:0;align-self:center">الطلب:</label>
+        <select class="select" name="id" onchange="this.form.submit()" style="min-inline-size:260px;padding-inline-end:44px">
+            @foreach (var r in openRequests)
+            {
+                <option value="@r.RequestId" selected="@(r.RequestId == request.RequestId)">@Ref(r.RequestId) · @r.BloodType · @r.UnitsConfirmed/@r.UnitsNeeded</option>
+            }
+        </select>
+    </form>
+}
+
+<!-- request context -->
+<div class="card req-context">
+    <div>@Html.Droplet(request.BloodType, true, "lg")</div>
+    <div class="rc-main">
+        <div class="rc-top">
+            <strong style="direction:ltr">@Ref(request.RequestId)</strong>
+            @Html.RequestBadge(request.Priority, request.Status)
+        </div>
+        <p class="muted">
+            مطلوب <strong>@request.UnitsNeeded</strong> وحدات · فصيلة <strong style="direction:ltr">@request.BloodType</strong> · @request.Department
+        </p>
+    </div>
+    <div class="rc-progress">
+        <div class="rc-num"><span style="direction:ltr">@request.UnitsConfirmed</span> / @request.UnitsNeeded</div>
+        <div class="rc-lbl">وحدات مؤكّدة</div>
+    </div>
+</div>
+
+<div class="info-note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01" stroke-linecap="round"/></svg>
+    بعد أن يتبرّع المتبرع، افحص فصيلته مخبرياً ثم وثّقها. إن اختلفت عن الفصيلة المطلوبة، تُصحَّح فصيلة المتبرع وتُوثَّق، لكن لا تُحتسب وحدة لهذا الطلب.
+</div>
+
+<h3 class="block-title" style="margin-block:26px 14px">
+    المتبرعون المتوافقون (@matches.Count)
+</h3>
+
+@if (matches.Any())
+{
+    <div class="stack" style="--stack:14px">
+        @foreach (var d in matches)
+        {
+            var canEdit = request.Status == "Open" || request.Status == "Matched";
+            <div class="donor-row card">
+                <div class="dr-row">
+                @Html.Droplet(d.BloodType, d.IsVerified, "sm")
+                <div class="dr-main">
+                    <div class="dr-top">
+                        <strong>@d.FullName</strong>
+                        @if (responderIds.Contains(d.DonorId))
+                        {
+                            <span class="badge badge-fulfilled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="12" height="12" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg>استجاب</span>
+                        }
+                        @Html.StatusBadge(d.IsVerified ? "Verified" : "Unverified")
+                        @if (d.City == request.Hospital?.City || d.City == (ViewData["HospitalCity"] as string))
+                        {
+                            <span class="badge badge-open">نفس المدينة</span>
+                        }
+                    </div>
+                    <div class="rr-meta">
+                        <span class="meta">@Html.Icon("pin")<span>@d.City</span></span>
+                        <span class="meta">@Html.Icon("drop")<span>الفصيلة المُدخلة: <span style="direction:ltr">@d.BloodType</span></span></span>
+                        <span class="meta">@Html.Icon("history")آخر تبرّع: @(d.LastDonationDate?.ToString("dd/MM/yyyy") ?? "—")</span>
+                    </div>
+                </div>
+                @if (canEdit)
+                {
+                    <div class="dr-actions">
+                        @if (d.IsVerified)
+                        {
+                            <form asp-action="RecordDonation" method="post" style="margin:0">
+                                <input type="hidden" name="requestId" value="@request.RequestId" />
+                                <input type="hidden" name="donorId" value="@d.DonorId" />
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M12 2s7 8 7 12.5A7 7 0 015 14.5C5 10 12 2 12 2z"/></svg>
+                                    تسجيل تبرّع
+                                </button>
+                            </form>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="openVerify(this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                                تصحيح الفصيلة
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-primary btn-sm" onclick="openVerify(this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" width="15" height="15" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg>
+                                توثيق الفصيلة
+                            </button>
+                        }
+                    </div>
+                }
+                </div>
+                @if (canEdit)
+                {
+                    <div class="verify-panel" hidden>
+                        <div class="vp-inner">
+                            <div class="vp-title">
+                                @(d.IsVerified ? "تصحيح الفصيلة (نتيجة الفحص المخبري)" : "نتيجة الفحص المخبري")
+                            </div>
+                            <p class="muted" style="font-size:.86rem">
+                                @(d.IsVerified
+                                    ? "اختر الفصيلة الصحيحة التي أكّدها المختبر. تُصحَّح فصيلة المتبرع، وتُحتسب وحدة فقط إن كانت متوافقة والمتبرع مؤهّلاً."
+                                    : "اختر الفصيلة التي أكّدها المختبر. إن اختلفت عن المُدخلة، ستُصحّح فصيلة المتبرع.")
+                            </p>
+                            <form asp-action="@(d.IsVerified ? "CorrectDonorType" : "VerifyDonor")" method="post" class="vp-row">
+                                <input type="hidden" name="requestId" value="@request.RequestId" />
+                                <input type="hidden" name="donorId" value="@d.DonorId" />
+                                <select name="confirmedType" class="form-select" style="max-width:140px">
+                                    @foreach (var t in types)
+                                    {
+                                        <option value="@t" selected="@(d.BloodType == t)">@t</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm">@(d.IsVerified ? "تأكيد التصحيح" : "تأكيد التوثيق")</button>
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="closeVerify(this)">إلغاء</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="empty card">
+        @Html.Icon("search")
+        <p>لا يوجد متبرعون متوافقون ومتاحون ومؤهّلون لهذا الطلب حالياً.</p>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function openVerify(btn) {
+            var row = btn.closest(".donor-row");
+            var panel = row.querySelector(".verify-panel");
+            if (panel) panel.hidden = false;
+        }
+        function closeVerify(btn) {
+            var panel = btn.closest(".verify-panel");
+            if (panel) panel.hidden = true;
+        }
+    </script>
+}

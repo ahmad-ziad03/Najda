@@ -1,39 +1,4 @@
-﻿/* ---------------- Language ---------------- */
-const LANG_KEY = "najda-lang";
-
-function currentLang() {
-    return localStorage.getItem(LANG_KEY) || "ar";
-}
-
-function applyLang(lang) {
-    const html = document.documentElement;
-    html.setAttribute("lang", lang);
-    html.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
-    localStorage.setItem(LANG_KEY, lang);
-
-    // input placeholders (can't use dual nodes)
-    document.querySelectorAll("[data-ph-ar]").forEach((el) => {
-        el.setAttribute("placeholder", el.getAttribute(lang === "ar" ? "data-ph-ar" : "data-ph-en") || "");
-    });
-
-    // toggle buttons show the OTHER language
-    document.querySelectorAll("[data-lang-label]").forEach((el) => {
-        el.textContent = lang === "ar" ? "EN" : "ع";
-    });
-
-    // <option> text (can't use dual nodes) via data-ar / data-en
-    document.querySelectorAll("select option[data-ar]").forEach((o) => {
-        o.textContent = o.getAttribute("data-" + lang);
-    });
-
-    document.dispatchEvent(new CustomEvent("langchange", { detail: { lang } }));
-}
-
-function toggleLang() {
-    applyLang(currentLang() === "ar" ? "en" : "ar");
-}
-
-/* ---------------- Toast ---------------- */
+﻿/* ---------------- Toast ---------------- */
 const TOAST_IC = {
     success: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>`,
     info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 8v5"/><path d="M12 16h.01"/></svg>`,
@@ -56,6 +21,36 @@ function showToast(msg, type = "success") {
     setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 260); }, 2600);
 }
 
+/* ---------------- Confirm dialog (replaces window.confirm) ----------------
+   Usage on a form:  onsubmit="return najdaConfirm(this, 'العنوان', 'الرسالة')"
+   (some call sites still pass extra English arguments; they are accepted
+   and ignored so nothing else needs to change.)
+   Returns false and, if the user confirms in the dialog, submits the form. */
+function najdaConfirm(form, title, message) {
+    const scrim = document.getElementById("confirmScrim");
+    if (!scrim) return true; // dialog not on page -> allow normal submit
+
+    const t = document.getElementById("confirmTitle");
+    const m = document.getElementById("confirmMsg");
+    const ok = document.getElementById("confirmOk");
+    const cancel = document.getElementById("confirmCancel");
+
+    if (t) t.textContent = title || "تأكيد الإجراء";
+    if (m) m.textContent = message || "";
+
+    scrim.classList.add("open");
+
+    const close = () => {
+        scrim.classList.remove("open");
+        ok.onclick = null; cancel.onclick = null; scrim.onclick = null;
+    };
+    ok.onclick = () => { close(); form.submit(); };
+    cancel.onclick = close;
+    scrim.onclick = (e) => { if (e.target === scrim) close(); };
+
+    return false; // block the immediate submit; we submit after confirmation
+}
+
 /* ---------------- Mobile dashboard sidebar ---------------- */
 function openSide() {
     document.getElementById("side")?.classList.add("open");
@@ -68,8 +63,6 @@ function closeSide() {
 
 /* ---------------- Boot ---------------- */
 document.addEventListener("DOMContentLoaded", () => {
-    applyLang(currentLang());
-
     // public nav hamburger
     const burger = document.querySelector("[data-nav-burger]");
     if (burger) burger.addEventListener("click", () => document.getElementById("navlinks")?.classList.toggle("open"));

@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Najda.Models;
 
 namespace Najda.Data;
+
+// This is the SAME class the Identity template created — it already inherits
+// IdentityDbContext so the AspNet* tables keep working. We just add our own
+// DbSets (one per model) and a little relationship configuration.
 public class ApplicationDbContext : IdentityDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -17,10 +21,6 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<BloodRequest> Requests => Set<BloodRequest>();
     public DbSet<Donation> Donations => Set<Donation>();
     public DbSet<RequestMatch> RequestMatches => Set<RequestMatch>();
-    public DbSet<Partner> Partners => Set<Partner>();
-    public DbSet<Coupon> Coupons => Set<Coupon>();
-    public DbSet<CouponRedemption> CouponRedemptions => Set<CouponRedemption>();
-    public DbSet<Sponsor> Sponsors => Set<Sponsor>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -29,11 +29,6 @@ public class ApplicationDbContext : IdentityDbContext
         // A donor's blood type is unique-ish but not a key; make sure emails are unique.
         builder.Entity<Donor>().HasIndex(d => d.Email).IsUnique();
         builder.Entity<Hospital>().HasIndex(h => h.Email).IsUnique();
-
-        // Store money with a fixed precision (avoids EF warnings).
-        builder.Entity<CouponRedemption>()
-               .Property(r => r.CommissionAmount)
-               .HasPrecision(6, 2);
 
         // Distance in km, one decimal place (e.g. 3.8) — clears the decimal warning.
         builder.Entity<RequestMatch>()

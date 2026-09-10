@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Najda.Models;
@@ -9,10 +9,6 @@ public class Hospital
 
     [Required, MaxLength(150)]
     public string Name { get; set; } = string.Empty;
-
-    // English name (proper noun) shown when the site is in English.
-    [MaxLength(150)]
-    public string? NameEn { get; set; }
 
     [Required, MaxLength(256)]
     public string Email { get; set; } = string.Empty;
@@ -25,10 +21,6 @@ public class Hospital
 
     [Required, MaxLength(80)]
     public string City { get; set; } = string.Empty;
-
-    // English city name shown when the site is in English.
-    [MaxLength(80)]
-    public string? CityEn { get; set; }
 
     [MaxLength(80)]
     public string? Area { get; set; }

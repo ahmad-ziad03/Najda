@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "الصفحة غير موجودة";
+}
+
+<main class="err-wrap">
+    <div class="wrap center">
+        <div class="err-drop">
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M60 12C60 12 96 48 96 74A36 36 0 0124 74C24 48 60 12 60 12Z" fill="#C0392B"/>
+                <text x="60" y="88" text-anchor="middle" font-family="Readex Pro, sans-serif" font-weight="700" font-size="30" fill="#fff">404</text>
+            </svg>
+        </div>
+        <h1 class="err-title">هذه الصفحة تسرّبت منّا</h1>
+        <p class="err-lead">
+            الرابط الذي طلبته غير موجود أو تم نقله. لكن لا تقلق — طريقك للنجدة ما زال مفتوحاً.
+        </p>
+        <div class="err-actions">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">العودة للرئيسية</a>
+            <a asp-controller="Home" asp-action="About" class="btn btn-ghost btn-lg">كيف تعمل المنصة</a>
+        </div>
+    </div>
+</main>

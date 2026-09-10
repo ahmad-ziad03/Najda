@@ -1,0 +1,136 @@
+﻿@model Hospital
+@{
+    ViewData["Title"] = "إدارة مستشفى";
+    Layout = "_LayoutDashboard";
+    var requests = ViewData["Requests"] as List<BloodRequest> ?? new List<BloodRequest>();
+}
+
+<a asp-action="Hospitals" class="back-link">← عودة للمستشفيات</a>
+
+<div class="card hosp-header">
+    <div class="hh-ic">🏥</div>
+    <div class="hh-main">
+        <div class="hh-top">
+            <h2>@Model.Name</h2>
+            @Html.StatusBadge(Model.Status)
+        </div>
+        <div class="rr-meta">
+            <span class="meta">@Html.Icon("pin")<span>@Model.City</span></span>
+            <span class="meta">رقم الترخيص:@(Model.LicenseNumber ?? "—")</span>
+            @if (Model.ApprovedDate.HasValue)
+            {
+                <span class="meta"> معتمد منذ @Model.ApprovedDate.Value.ToString("yyyy/MM/dd")</span>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="manage-grid">
+    <div>
+        <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:16px">
+            <div class="stat"><div class="num">@ViewData["TotalRequests"]</div><div class="lbl">إجمالي الطلبات</div></div>
+            <div class="stat"><div class="num crimson">@ViewData["ActiveRequests"]</div><div class="lbl">طلبات نشطة</div></div>
+            <div class="stat"><div class="num gold">@ViewData["FulfilledRequests"]</div><div class="lbl">مكتملة</div></div>
+        </div>
+
+        <div class="card" style="margin-block-start:22px">
+            <div class="toolbar">
+                <h3 class="block-title">أحدث طلبات المستشفى</h3>
+            </div>
+            @if (requests.Any())
+            {
+                <div class="table-wrap" style="border:0">
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>الفصيلة</th>
+                                <th>الحالة</th>
+                                <th>التاريخ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in requests)
+                            {
+                                <tr>
+                                    <td>@Html.BtChip(r.BloodType)</td>
+                                    <td style="direction:ltr">@r.UnitsConfirmed / @r.UnitsNeeded</td>
+                                    <td>@Html.RequestBadge(r.Priority, r.Status)</td>
+                                    <td style="direction:ltr;white-space:nowrap">@r.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="muted">لم ينشر هذا المستشفى أي طلب بعد.</p>
+            }
+        </div>
+    </div>
+
+    <aside class="stack" style="--stack:22px">
+        <!-- contact person -->
+        <div class="card sub-card">
+            <div class="sub-head">
+                <span class="badge badge-fulfilled">مسؤول التواصل</span>
+                <h3>@(string.IsNullOrEmpty(Model.ContactName) ? "—" : Model.ContactName)</h3>
+            </div>
+            <ul class="sub-meta">
+                <li>
+                    <span class="sm-k">البريد الإلكتروني</span>
+                    <strong style="direction:ltr">@(Model.ContactEmail ?? "—")</strong>
+                </li>
+                <li>
+                    <span class="sm-k">رقم الهاتف</span>
+                    <strong style="direction:ltr">@(Model.ContactPhone ?? "—")</strong>
+                </li>
+                <li>
+                    <span class="sm-k">تاريخ التعيين</span>
+                    <strong style="direction:ltr">@(Model.ContactAppointedDate?.ToString("dd/MM/yyyy") ?? "—")</strong>
+                </li>
+            </ul>
+            <p class="card-note">الوصول للمنصة مجاني للمستشفيات.</p>
+        </div>
+
+        <!-- actions -->
+        <div class="card">
+            <h3 class="block-title" style="margin-block-end:14px">إجراءات الإدارة</h3>
+            <div class="stack" style="--stack:10px">
+                <a asp-action="EditHospital" asp-route-id="@Model.HospitalId" class="btn btn-ghost btn-block act-l">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z" /></svg>
+                    تعديل بيانات المستشفى
+                </a>
+                @if (Model.Status == "Pending")
+                {
+                    <form asp-action="ApproveHospital" asp-route-id="@Model.HospitalId" method="post" style="margin:0">
+                        <button type="submit" class="btn btn-primary btn-block act-l">
+                            @Html.Icon("check")اعتماد المستشفى
+                        </button>
+                    </form>
+                }
+            </div>
+
+            <hr class="divider" />
+
+            <div class="danger">
+                <div class="danger-head">منطقة حسّاسة</div>
+                <div class="row-between" style="gap:12px">
+                    <div>
+                        <strong>
+                            @(Model.Status == "Suspended" ? "إعادة تفعيل الحساب" : "تعليق الحساب")
+                        </strong>
+                        <p class="muted" style="font-size:.85rem">
+                            يوقف نشر الطلبات مؤقتاً.
+                        </p>
+                    </div>
+                    <form asp-action="ToggleHospitalSuspend" asp-route-id="@Model.HospitalId" method="post" style="margin:0">
+                        <button type="submit" class="btn btn-sm suspend-btn @(Model.Status == "Suspended" ? "is-on" : "")">
+                            @(Model.Status == "Suspended" ? "تفعيل" : "تعليق")
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>

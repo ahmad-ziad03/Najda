@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "غير مصرّح";
+}
+
+<main class="err-wrap">
+    <div class="wrap center">
+        <div class="err-drop">
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M60 12C60 12 96 48 96 74A36 36 0 0124 74C24 48 60 12 60 12Z" fill="#C0392B"/>
+                <path d="M46 62h28v22H46z" fill="#fff" opacity=".95"/>
+                <path d="M52 62v-8a8 8 0 0116 0v8" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <h1 class="err-title">لا تملك صلاحية الوصول</h1>
+        <p class="err-lead">
+            هذه الصفحة مخصّصة لدور مختلف في المنصة. إن كنت تعتقد أن هذا خطأ، تواصل مع إدارة نجدة.
+        </p>
+        <div class="err-actions">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">العودة للرئيسية</a>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-ghost btn-lg">تسجيل الدخول بحساب آخر</a>
+        </div>
+    </div>
+</main>

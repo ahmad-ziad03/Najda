@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Najda.Models;
 
@@ -13,10 +13,6 @@ public class RegisterViewModel
     [StringLength(150)]
     [Display(Name = "Name")]
     public string FullName { get; set; } = string.Empty;
-
-    // Hospital only: English name.
-    [StringLength(150)]
-    public string? HospitalNameEn { get; set; }
 
     [Required(ErrorMessage = "Email is required.")]
     [EmailAddress(ErrorMessage = "Enter a valid email.")]
