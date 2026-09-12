@@ -26,7 +26,6 @@ public class DonorController : Controller
         TempData["ToastType"] = type;
     }
 
-    // Note: an unused `titleEn` parameter is still accepted so every existing
     // call site (Chrome("key", "arabic", "english")) keeps working unchanged;
     // only the Arabic title is stored/displayed now.
     private void Chrome(string active, string titleAr, string titleEn = "")

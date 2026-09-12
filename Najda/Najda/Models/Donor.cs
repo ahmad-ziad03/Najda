@@ -16,7 +16,7 @@ public class Donor
     [MaxLength(30)]
     public string? Phone { get; set; }
 
-    // Entered by the donor — treated as preliminary until a hospital confirms it.
+    //  treated as preliminary until a hospital confirms it.
     [Required, MaxLength(3)]
     public string BloodType { get; set; } = string.Empty;
 

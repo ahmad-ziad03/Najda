@@ -19,7 +19,5 @@ public class RequestMatch
     [Required, MaxLength(12)]
     public string MatchState { get; set; } = "Matched";
 
-    public decimal? DistanceKm { get; set; }
-
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 }

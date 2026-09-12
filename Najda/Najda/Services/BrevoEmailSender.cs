@@ -12,7 +12,7 @@ public class BrevoOptions
     public string SenderName { get; set; } = "Najda";
 }
 
-// Sends email through Brevo's transactional API (https://api.brevo.com/v3/smtp/email).
+// Sends email through Brevo's transactional API
 // If no API key is configured, it does NOT throw — it logs the email instead, so
 // the app keeps working in development without credentials.
 public class BrevoEmailSender : IEmailSender

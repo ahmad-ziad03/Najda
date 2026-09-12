@@ -30,11 +30,6 @@ public class ApplicationDbContext : IdentityDbContext
         builder.Entity<Donor>().HasIndex(d => d.Email).IsUnique();
         builder.Entity<Hospital>().HasIndex(h => h.Email).IsUnique();
 
-        // Distance in km, one decimal place (e.g. 3.8) — clears the decimal warning.
-        builder.Entity<RequestMatch>()
-               .Property(m => m.DistanceKm)
-               .HasPrecision(5, 1);
-
         // A donor appears at most once per request.
         builder.Entity<RequestMatch>()
                .HasIndex(m => new { m.RequestId, m.DonorId })
